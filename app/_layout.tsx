@@ -8,6 +8,7 @@ import {
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { ThemeProvider } from 'styled-components/native';
 
 import { useColorScheme } from '@/components/useColorScheme';
@@ -28,10 +29,12 @@ const RootLayoutNav = () => {
 
     return (
         <ThemeProvider theme={colorScheme === 'dark' ? theme : theme}>
-            <Stack screenOptions={{ headerShown: false }}>
-                {/*<Stack.Screen name="walkthrough/index" options={{ headerShown: false }} />*/}
-                {/*<Stack.Screen name="(tabs)" options={{ headerShown: false }} />*/}
-            </Stack>
+            <SafeAreaProvider>
+                <Stack screenOptions={{ headerShown: false }}>
+                    {/*<Stack.Screen name="walkthrough/index" options={{ headerShown: false }} />*/}
+                    {/*<Stack.Screen name="(tabs)" options={{ headerShown: false }} />*/}
+                </Stack>
+            </SafeAreaProvider>
         </ThemeProvider>
     );
 };

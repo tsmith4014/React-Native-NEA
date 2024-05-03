@@ -1,13 +1,11 @@
+import SecondSplash from '@/assets/images/splash.png';
+import { FadeInView } from '@/components/animations/fade.animation';
+import { SplashAnimation } from '@/components/animations/splash.animation';
 import { router } from 'expo-router';
+import { useEffect } from 'react';
 import { ImageBackground, Text } from 'react-native';
 import Animated from 'react-native-reanimated';
 import styled from 'styled-components/native';
-
-import { FadeInView } from '@/components/animations/fade.animation';
-import { SplashAnimation } from '@/components/animations/splash.animation';
-import { useEffect } from 'react';
-
-const SecondSplash = require('@/assets/images/splash.png');
 
 const SplashContainer = styled(Animated.View)`
     flex: 1;

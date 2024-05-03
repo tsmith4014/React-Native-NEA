@@ -1,46 +1,43 @@
-import { SafeArea } from '@/components/utility/safe-area.component';
+import { UserRole } from '@/store/user-role';
 import * as LocalAuthentication from 'expo-local-authentication';
 import { Image, Pressable, Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const sections = [
     {
         text: ['I am here to get ', 'Help', ', Talk, Access Resources'],
         image: require('@/assets/images/survivor.png'),
-        to: 'Survivor',
-        role: 'survivor',
+        role: UserRole.victim,
     },
     {
         text: ['I want to ', 'Volunteer', ' to Chat, Offer Emotional Support'],
         image: require('@/assets/images/volunteer.png'),
-        to: 'Volunteer',
-        role: 'volunteer',
+        role: UserRole.volunteer,
     },
     {
         text: ['I am a ', 'Lawyer', ' offering legal aid for DV victims'],
         image: require('@/assets/images/lawyer.png'),
-        to: 'Lawyer',
-        role: 'lawyer',
+        role: UserRole.lawyer,
     },
     {
         text: ['I am a ', 'Therapist', ' offering counseling for DV survivors'],
         image: require('@/assets/images/therapist.png'),
-        to: 'Therapist',
-        role: 'therapist',
+        role: UserRole.therapist,
     },
 ] as const;
 
 const WalkthroughScreen = () => {
     const authenticate = async () => {
-        const check = await LocalAuthentication.isEnrolledAsync();
-        console.info('check', JSON.stringify(check));
-        const result = await LocalAuthentication.authenticateAsync({ promptMessage: 'Please authenticate first' });
-        console.info('result', JSON.stringify(result));
+        // const check = await LocalAuthentication.isEnrolledAsync();
+        // console.info('check', JSON.stringify(check));
+        // const result = await LocalAuthentication.authenticateAsync({ promptMessage: 'Please authenticate first' });
+        // console.info('result', JSON.stringify(result));
     };
     return (
-        <SafeArea>
-            <View className="min-h-full flex flex-col gap-6 p-4 justify-center">
+        <SafeAreaView>
+            <View className="min-h-full flex flex-col gap-6 p-4 mt-2 justify-start">
                 {sections.map((section) => {
-                    const { text, image, to, role } = section;
+                    const { text, image, role } = section;
                     return (
                         <Pressable
                             key={role}
@@ -59,7 +56,7 @@ const WalkthroughScreen = () => {
                     );
                 })}
             </View>
-        </SafeArea>
+        </SafeAreaView>
     );
 };
 
