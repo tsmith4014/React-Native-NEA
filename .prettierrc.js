@@ -1,11 +1,8 @@
-// prettier.config.js, .prettierrc.js, prettier.config.cjs, or .prettierrc.cjs
-
-/** @type {import("prettier").Config} */
-const config = {
-    trailingComma: 'es5',
-    tabWidth: 4,
+module.exports = {
+    printWidth: 120,
     singleQuote: true,
-    semi: true
+    tabWidth: 4,
+    bracketSpacing: true,
+    organizeImportsSkipDestructiveCodeActions: true,
+    plugins: ['prettier-plugin-organize-imports'],
 };
-
-module.exports = config;
