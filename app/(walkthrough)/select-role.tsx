@@ -10,7 +10,7 @@ const sections = [
     {
         text: ['I am here to get ', 'Help', ', Talk, Access Resources'],
         image: require('@/assets/images/survivor.png'),
-        role: UserRole.victim,
+        role: UserRole.survivor,
     },
     {
         text: ['I want to ', 'Volunteer', ' to Chat, Offer Emotional Support'],
@@ -18,7 +18,7 @@ const sections = [
         role: UserRole.volunteer,
     },
     {
-        text: ['I am a ', 'Lawyer', ' offering legal aid for DV victims'],
+        text: ['I am a ', 'Lawyer', ' offering legal aid for DV survivors'],
         image: require('@/assets/images/lawyer.png'),
         role: UserRole.lawyer,
     },
@@ -35,7 +35,7 @@ const WalkthroughScreen = () => {
         // console.info('check', JSON.stringify(check));
         // const result = await LocalAuthentication.authenticateAsync({ promptMessage: 'Please authenticate first' });
         // console.info('result', JSON.stringify(result));
-        router.navigate('/victim/features');
+        router.navigate('/survivor/features');
     };
     return (
         <SafeAreaView>

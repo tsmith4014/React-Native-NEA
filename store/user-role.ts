@@ -1,7 +1,7 @@
 import { StateCreator } from 'zustand';
 
 export enum UserRole {
-    victim = 'victim',
+    survivor = 'survivor',
     volunteer = 'volunteer',
     lawyer = 'lawyer',
     therapist = 'therapist',

@@ -4,16 +4,16 @@ import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 import createUserSlice, { User } from './user';
 
-export type VictimStore = User & Shared;
+export type SurvivorStore = User & Shared;
 
-const useVictimStore = create<VictimStore>()(
+const useSurvivorStore = create<SurvivorStore>()(
     persist(
         (set, ...a) => ({
             ...createUserSlice(set, ...a),
             ...createSharedSlice(set, ...a),
         }),
         {
-            name: 'victimStore',
+            name: 'survivorStore',
             storage: createJSONStorage(() => zustandStorage),
             onRehydrateStorage: () => (state) => {
                 state!.setHasHydrated(true);
@@ -22,4 +22,4 @@ const useVictimStore = create<VictimStore>()(
     ),
 );
 
-export default useVictimStore;
+export default useSurvivorStore;

@@ -1,18 +1,18 @@
 import { create } from 'zustand';
 import useLawyerStore from './lawyer';
+import useSurvivorStore from './survivor';
 import useTherapistStore from './therapist';
 import createUserRoleSlice, { UserRole, UserRoleSlice } from './user-role';
-import useVictimStore from './victim';
 import useVolunteerStore from './volunteer';
 
 export type RootState = {
-    victim: typeof useVictimStore;
+    survivor: typeof useSurvivorStore;
     volunteer: typeof useVolunteerStore;
     lawyer: typeof useLawyerStore;
     therapist: typeof useTherapistStore;
     switchRole: (role: UserRole) => void;
     currentUserStore?:
-        | typeof useVictimStore
+        | typeof useSurvivorStore
         | typeof useVolunteerStore
         | typeof useLawyerStore
         | typeof useTherapistStore;
@@ -20,7 +20,7 @@ export type RootState = {
 
 const useRootStore = create<RootState>()((set, ...a) => ({
     ...createUserRoleSlice(set, ...a),
-    victim: useVictimStore,
+    survivor: useSurvivorStore,
     volunteer: useVolunteerStore,
     lawyer: useLawyerStore,
     therapist: useTherapistStore,
