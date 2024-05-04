@@ -34,7 +34,6 @@ module.exports = {
                 error: '#FF5722',
                 info: '#29B6F6',
                 warning: '#FFA000',
-                gradient: 'linear-gradient(180deg, #147952 0%, #4AC16A 100%)',
             },
         },
     },

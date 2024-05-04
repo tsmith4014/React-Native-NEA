@@ -1,3 +1,4 @@
+import { theme } from '@/infrastructure/theme';
 import {
     Montserrat_400Regular,
     Montserrat_500Medium,
@@ -8,12 +9,10 @@ import {
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
+import { useColorScheme } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { ThemeProvider } from 'styled-components/native';
-
-import { useColorScheme } from '@/components/useColorScheme';
-import { theme } from '@/infrastructure/theme';
-
+// https://docs.expo.dev/router/error-handling/#errorboundary
 export { ErrorBoundary } from 'expo-router';
 
 export const unstable_settings = {

@@ -34,9 +34,6 @@ export const colors = {
     bg: {
         primary: '#FFFFFF',
         secondary: '#4AC16A',
-        gradient: {
-            primary: 'linear-gradient(180deg, #147952 0%, #4AC16A 100%)',
-        },
     },
     text: {
         primary: '#0B0B14',

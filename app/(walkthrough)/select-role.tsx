@@ -1,7 +1,10 @@
+import shadow from '@/infrastructure/theme/shadow';
 import { UserRole } from '@/store/user-role';
 import * as LocalAuthentication from 'expo-local-authentication';
-import { Image, Pressable, Text, View } from 'react-native';
+import { router } from 'expo-router';
+import { Pressable } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { Image, Text, View } from 'react-native-ui-lib';
 
 const sections = [
     {
@@ -32,6 +35,7 @@ const WalkthroughScreen = () => {
         // console.info('check', JSON.stringify(check));
         // const result = await LocalAuthentication.authenticateAsync({ promptMessage: 'Please authenticate first' });
         // console.info('result', JSON.stringify(result));
+        router.navigate('/victim/features');
     };
     return (
         <SafeAreaView>
@@ -42,6 +46,7 @@ const WalkthroughScreen = () => {
                         <Pressable
                             key={role}
                             className="bg-spring50 px-8 py-4 rounded-2xl flex items-center justify-center"
+                            style={shadow.elevation2}
                             onPress={() => {
                                 authenticate();
                             }}
