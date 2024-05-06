@@ -10,6 +10,7 @@ import styled from 'styled-components/native';
 const SplashContainer = styled(Animated.View)`
     flex: 1;
     flex-direction: column;
+    background-color: ${({ theme }) => theme.colors.ui.neutral.white};
 `;
 
 const SplashImage = styled(ImageBackground)`
