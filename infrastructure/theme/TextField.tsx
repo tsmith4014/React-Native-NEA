@@ -2,7 +2,6 @@ import { Error, Success, Warning } from '@/assets/icons';
 import { BodyRegular, bodyStyles } from '@/infrastructure/theme/fonts';
 import React, { useState } from 'react';
 import { View, TextField as WixTextField, TextFieldProps as WixTextFieldProps } from 'react-native-ui-lib';
-import { ValidationMessagePosition } from 'react-native-ui-lib/src/components/textField/types';
 import { useTheme } from 'styled-components/native';
 
 export enum HelperTextType {
@@ -112,8 +111,6 @@ const TextField = ({
                         height: 0,
                     }}
                     color={editable || readOnly ? colors.ui.neutral.gray90 : colors.ui.neutral.gray70}
-                    enableErrors
-                    validationMessagePosition={ValidationMessagePosition.TOP}
                     validateOnBlur
                     showCharCounter={false}
                     value={value}

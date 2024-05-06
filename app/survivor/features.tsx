@@ -1,7 +1,9 @@
-import TextField, { HelperTextType } from '@/infrastructure/theme/TextField';
+import Button from '@/infrastructure/theme/Button';
+import TextField from '@/infrastructure/theme/TextField';
 import { BodyMedium, Title } from '@/infrastructure/theme/fonts';
 import { useState } from 'react';
 import { useWindowDimensions } from 'react-native';
+import { ChevronLeft, ChevronRight } from 'react-native-feather';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Image, View } from 'react-native-ui-lib';
 
@@ -40,6 +42,7 @@ const Features = () => {
                     onChangeText={(value) => setValue(value)}
                     className="w-[300px]"
                 />
+                <Button IconSource={ChevronLeft} />
             </View>
         </SafeAreaView>
     );
