@@ -1,12 +1,9 @@
-import { Theme } from '@/infrastructure/theme';
-import TextField from '@/infrastructure/theme/TextField';
+import TextField, { HelperTextType } from '@/infrastructure/theme/TextField';
 import { BodyMedium, Title } from '@/infrastructure/theme/fonts';
-import shadow from '@/infrastructure/theme/shadow';
 import { useState } from 'react';
 import { useWindowDimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Carousel, Colors, Constants, Image, Spacings, View } from 'react-native-ui-lib';
-import { useTheme } from 'styled-components/native';
+import { Image, View } from 'react-native-ui-lib';
 
 const sections = [
     {
@@ -37,7 +34,12 @@ const Features = () => {
                 <BodyMedium.Medium className="text-center w-full mt-2">
                     Be Anonymous! Talk your heart out with our Volunteers who wont judge you.
                 </BodyMedium.Medium>
-                <TextField label="Label" value={value} onChangeText={(value) => setValue(value)} />
+                <TextField
+                    label="Label"
+                    value={value}
+                    onChangeText={(value) => setValue(value)}
+                    className="w-[300px]"
+                />
             </View>
         </SafeAreaView>
     );
