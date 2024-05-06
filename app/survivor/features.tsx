@@ -1,6 +1,6 @@
 import Button from '@/infrastructure/theme/Button';
 import Switch from '@/infrastructure/theme/Switch';
-import TextField from '@/infrastructure/theme/TextField';
+import TextField, { HelperTextType } from '@/infrastructure/theme/TextField';
 import { BodyMedium, Title } from '@/infrastructure/theme/fonts';
 import { useState } from 'react';
 import { useWindowDimensions } from 'react-native';
