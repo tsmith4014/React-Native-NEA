@@ -1,9 +1,10 @@
 import Button from '@/infrastructure/theme/Button';
+import Switch from '@/infrastructure/theme/Switch';
 import TextField from '@/infrastructure/theme/TextField';
 import { BodyMedium, Title } from '@/infrastructure/theme/fonts';
 import { useState } from 'react';
 import { useWindowDimensions } from 'react-native';
-import { ChevronLeft, ChevronRight } from 'react-native-feather';
+import { ChevronLeft } from 'react-native-feather';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Image, View } from 'react-native-ui-lib';
 
@@ -43,6 +44,7 @@ const Features = () => {
                     className="w-[300px]"
                 />
                 <Button IconSource={ChevronLeft} />
+                <Switch />
             </View>
         </SafeAreaView>
     );
