@@ -10,6 +10,7 @@ import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import { useColorScheme } from 'react-native';
+import { ClickOutsideProvider } from 'react-native-click-outside';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { ThemeProvider } from 'styled-components/native';
 // https://docs.expo.dev/router/error-handling/#errorboundary
@@ -26,14 +27,16 @@ SplashScreen.preventAutoHideAsync();
 const RootLayoutNav = () => {
     const colorScheme = useColorScheme();
     return (
-        <ThemeProvider theme={colorScheme === 'dark' ? theme : theme}>
-            <SafeAreaProvider>
-                <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: 'white' } }}>
-                    {/*<Stack.Screen name="walkthrough/index" options={{ headerShown: false }} />*/}
-                    {/*<Stack.Screen name="(tabs)" options={{ headerShown: false }} />*/}
-                </Stack>
-            </SafeAreaProvider>
-        </ThemeProvider>
+        <ClickOutsideProvider>
+            <ThemeProvider theme={colorScheme === 'dark' ? theme : theme}>
+                <SafeAreaProvider>
+                    <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: 'white' } }}>
+                        {/*<Stack.Screen name="walkthrough/index" options={{ headerShown: false }} />*/}
+                        {/*<Stack.Screen name="(tabs)" options={{ headerShown: false }} />*/}
+                    </Stack>
+                </SafeAreaProvider>
+            </ThemeProvider>
+        </ClickOutsideProvider>
     );
 };
 

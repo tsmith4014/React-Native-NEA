@@ -1,4 +1,5 @@
 import Button from '@/infrastructure/theme/Button';
+import SelectField from '@/infrastructure/theme/SelectField';
 import Switch from '@/infrastructure/theme/Switch';
 import TextField, { HelperTextType } from '@/infrastructure/theme/TextField';
 import { BodyMedium, Title } from '@/infrastructure/theme/fonts';
@@ -37,14 +38,8 @@ const Features = () => {
                 <BodyMedium.Medium className="text-center w-full mt-2">
                     Be Anonymous! Talk your heart out with our Volunteers who wont judge you.
                 </BodyMedium.Medium>
-                <TextField
-                    label="Label"
-                    value={value}
-                    onChangeText={(value) => setValue(value)}
-                    className="w-[300px]"
-                />
-                <Button IconSource={ChevronLeft} />
-                <Switch />
+                {/*<Button IconSource={ChevronLeft} />*/}
+                {/*<Switch />*/}
             </View>
         </SafeAreaView>
     );

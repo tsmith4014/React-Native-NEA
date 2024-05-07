@@ -1,7 +1,9 @@
 import { Error, Success, Warning } from '@/assets/icons';
 import { BodyRegular, bodyStyles } from '@/infrastructure/theme/fonts';
+import clsx from 'clsx';
 import React, { useState } from 'react';
-import { View, TextField as WixTextField, TextFieldProps as WixTextFieldProps } from 'react-native-ui-lib';
+import { ViewStyle } from 'react-native';
+import { Text, View, TextField as WixTextField, TextFieldProps as WixTextFieldProps } from 'react-native-ui-lib';
 import { useTheme } from 'styled-components/native';
 
 export enum HelperTextType {
@@ -26,6 +28,11 @@ type TextfieldProps = WixTextFieldProps & {
     icon?: React.ReactElement;
     readOnly?: boolean;
     value?: string;
+    outline?: boolean;
+    required?: boolean;
+    forceFocus?: boolean;
+    onFocus?: (value: boolean) => void;
+    containerStyle?: ViewStyle;
 };
 
 const TextField = ({
@@ -35,8 +42,14 @@ const TextField = ({
     icon,
     readOnly,
     value = '',
+    required = false,
     className,
     style,
+    outline = true,
+    containerStyle,
+    fieldStyle,
+    onFocus,
+    forceFocus,
     ...props
 }: TextfieldProps) => {
     const { colors } = useTheme();
@@ -54,6 +67,7 @@ const TextField = ({
             ? colors.ui.supporting[helperText.type]
             : undefined
         : undefined;
+    const focusedState = forceFocus ?? focused;
     const isFloating = focused || value.length;
     let numberOfIcons = 0;
     if (icon) {
@@ -66,47 +80,85 @@ const TextField = ({
         <View style={style} className={className}>
             <View
                 className="w-full"
-                style={{
-                    borderStyle: 'solid',
-                    borderColor: statusColor ?? (focused ? colors.brand.primary.spring50 : 'transparent'),
-                    borderWidth: 1,
-                    borderRadius: 5,
-                }}
+                style={
+                    outline
+                        ? {
+                              borderStyle: 'solid',
+                              borderColor:
+                                  statusColor ?? (focusedState ? colors.brand.primary.spring50 : 'transparent'),
+                              borderWidth: 1,
+                              borderRadius: 5,
+                          }
+                        : {}
+                }
             >
                 <WixTextField
                     {...props}
+                    readOnly={readOnly}
                     placeholder={label}
+                    leadingAccessory={
+                        required && (
+                            <View
+                                className={clsx('absolute', {
+                                    '-top-[14px] -left-[10px]': focused,
+                                    '-left-[6px]': !focused,
+                                })}
+                            >
+                                <Text
+                                    style={[
+                                        { color: colors.text.error },
+                                        focused ? bodyStyles.medium.xSmall : bodyStyles.medium.medium,
+                                    ]}
+                                >
+                                    *
+                                </Text>
+                            </View>
+                        )
+                    }
                     floatOnFocus
                     editable={editable}
                     placeholderTextColor={colors.ui.neutral.gray80}
                     floatingPlaceholder
                     floatingPlaceholderColor={colors.ui.neutral.gray80}
-                    floatingPlaceholderStyle={isFloating ? bodyStyles.medium.xSmall : bodyStyles.medium.medium}
-                    onFocus={() => setFocused(true)}
-                    onBlur={() => setFocused(false)}
-                    containerStyle={{
-                        borderStyle: 'solid',
-                        borderColor:
-                            statusColor ?? (focused ? colors.brand.primary.spring50 : colors.ui.neutral.gray20),
-                        borderWidth: 1,
-                        backgroundColor: editable ? colors.ui.neutral.white : colors.ui.neutral.gray10,
-                        width: '100%',
-                        height: 56,
-                        paddingHorizontal: 16,
-                        borderRadius: 4,
-                        position: 'relative',
+                    floatingPlaceholderStyle={focused ? bodyStyles.medium.xSmall : bodyStyles.medium.medium}
+                    onFocus={() => {
+                        setFocused(true);
+                        onFocus && onFocus(true);
                     }}
+                    onBlur={() => {
+                        setFocused(false);
+                        onFocus && onFocus(false);
+                    }}
+                    containerStyle={[
+                        {
+                            borderStyle: 'solid',
+                            borderColor:
+                                statusColor ??
+                                (focusedState ? colors.brand.primary.spring50 : colors.ui.neutral.gray20),
+                            borderWidth: 1,
+                            backgroundColor: editable ? colors.ui.neutral.white : colors.ui.neutral.gray10,
+                            width: '100%',
+                            height: 56,
+                            paddingHorizontal: 16,
+                            borderRadius: 4,
+                            position: 'relative',
+                        },
+                        containerStyle,
+                    ]}
                     style={{
                         height: 22,
                         marginRight: numberOfIcons * 28,
                         ...bodyStyles.medium.medium,
                     }}
-                    fieldStyle={{
-                        position: 'relative',
-                        top: isFloating ? 2 : -4,
-                        left: 0,
-                        right: 0,
-                    }}
+                    fieldStyle={[
+                        {
+                            position: 'relative',
+                            top: isFloating ? 2 : -4,
+                            left: 0,
+                            right: 0,
+                        },
+                        fieldStyle,
+                    ]}
                     labelStyle={{
                         height: 0,
                     }}
