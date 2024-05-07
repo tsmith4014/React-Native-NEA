@@ -7,7 +7,8 @@ import { useState } from 'react';
 import { useWindowDimensions } from 'react-native';
 import { ChevronLeft } from 'react-native-feather';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Image, View } from 'react-native-ui-lib';
+import { Carousel, Image, View } from 'react-native-ui-lib';
+import { useTheme } from 'styled-components/native';
 
 const sections = [
     {
@@ -28,18 +29,37 @@ const sections = [
 ] as const;
 
 const Features = () => {
-    const { width: windowWidth } = useWindowDimensions();
-    const [value, setValue] = useState('');
+    const { height: deviceHeight } = useWindowDimensions();
+    const { colors } = useTheme();
     return (
-        <SafeAreaView>
-            <View className="flex items-center px-4">
-                <Image resizeMode="contain" className={`mt-[72px] w-full mb-[88px]`} source={sections[0].image} />
-                <Title.Small>Live Chat</Title.Small>
-                <BodyMedium.Medium className="text-center w-full mt-2">
-                    Be Anonymous! Talk your heart out with our Volunteers who wont judge you.
-                </BodyMedium.Medium>
-                {/*<Button IconSource={ChevronLeft} />*/}
-                {/*<Switch />*/}
+        <SafeAreaView className="h-full flex justify-between">
+            <Carousel
+                pageControlPosition="over"
+                key={3}
+                horizontal
+                initialPage={0}
+                pageControlProps={{
+                    size: 8,
+                    color: colors.brand.primary.spring50,
+                    containerStyle: {
+                        bottom: 160,
+                    },
+                }}
+            >
+                {sections.map((section) => (
+                    <View className="flex items-center px-4" key={section.title}>
+                        <Image resizeMode="contain" className={`mt-[72px] w-full mb-[88px]`} source={section.image} />
+                        <Title.Small>{section.title}</Title.Small>
+                        <BodyMedium.Medium className="text-center w-full mt-2">{section.description}</BodyMedium.Medium>
+                    </View>
+                ))}
+            </Carousel>
+            <View className="px-4 mb-10">
+                <Button label="Get started" />
+                <View className="flex flex-row items-center justify-center">
+                    <BodyMedium.Medium>Already registered?</BodyMedium.Medium>
+                    <Button variant="text" label="Login" />
+                </View>
             </View>
         </SafeAreaView>
     );
