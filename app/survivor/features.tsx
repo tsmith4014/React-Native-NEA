@@ -1,11 +1,6 @@
 import Button from '@/infrastructure/theme/Button';
-import SelectField from '@/infrastructure/theme/SelectField';
-import Switch from '@/infrastructure/theme/Switch';
-import TextField, { HelperTextType } from '@/infrastructure/theme/TextField';
 import { BodyMedium, Title } from '@/infrastructure/theme/fonts';
-import { useState } from 'react';
-import { useWindowDimensions } from 'react-native';
-import { ChevronLeft } from 'react-native-feather';
+import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Carousel, Image, View } from 'react-native-ui-lib';
 import { useTheme } from 'styled-components/native';
@@ -29,7 +24,6 @@ const sections = [
 ] as const;
 
 const Features = () => {
-    const { height: deviceHeight } = useWindowDimensions();
     const { colors } = useTheme();
     return (
         <SafeAreaView className="h-full flex justify-between">
@@ -55,7 +49,7 @@ const Features = () => {
                 ))}
             </Carousel>
             <View className="px-4 mb-10">
-                <Button label="Get started" />
+                <Button label="Get started" onPress={() => router.navigate('/survivor/sign-up')} />
                 <View className="flex flex-row items-center justify-center">
                     <BodyMedium.Medium>Already registered?</BodyMedium.Medium>
                     <Button variant="text" label="Login" />

@@ -1,4 +1,3 @@
-import shadow from '@/infrastructure/theme/shadow';
 import React, { useState } from 'react';
 import { FlatList } from 'react-native';
 import { useClickOutside } from 'react-native-click-outside';
