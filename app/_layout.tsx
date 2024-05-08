@@ -11,6 +11,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import { useColorScheme } from 'react-native';
 import { ClickOutsideProvider } from 'react-native-click-outside';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { ThemeProvider } from 'styled-components/native';
 // https://docs.expo.dev/router/error-handling/#errorboundary
@@ -28,14 +29,16 @@ const RootLayoutNav = () => {
     const colorScheme = useColorScheme();
     return (
         <ClickOutsideProvider>
-            <ThemeProvider theme={colorScheme === 'dark' ? theme : theme}>
-                <SafeAreaProvider>
-                    <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: 'white' } }}>
-                        {/*<Stack.Screen name="walkthrough/index" options={{ headerShown: false }} />*/}
-                        {/*<Stack.Screen name="(tabs)" options={{ headerShown: false }} />*/}
-                    </Stack>
-                </SafeAreaProvider>
-            </ThemeProvider>
+            <GestureHandlerRootView style={{ flex: 1 }}>
+                <ThemeProvider theme={colorScheme === 'dark' ? theme : theme}>
+                    <SafeAreaProvider>
+                        <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: 'white' } }}>
+                            {/*<Stack.Screen name="walkthrough/index" options={{ headerShown: false }} />*/}
+                            {/*<Stack.Screen name="(tabs)" options={{ headerShown: false }} />*/}
+                        </Stack>
+                    </SafeAreaProvider>
+                </ThemeProvider>
+            </GestureHandlerRootView>
         </ClickOutsideProvider>
     );
 };

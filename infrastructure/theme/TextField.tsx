@@ -92,6 +92,7 @@ const TextField = ({
                         : {}
                 }
             >
+                {/*@ts-ignore*/}
                 <WixTextField
                     {...props}
                     readOnly={readOnly}
@@ -100,14 +101,16 @@ const TextField = ({
                         required && (
                             <View
                                 className={clsx('absolute', {
-                                    '-top-[14px] -left-[10px]': focused,
-                                    '-left-[6px]': !focused,
+                                    '-top-[14px] -left-[10px]': isFloating,
+                                    '-left-[6px]': !isFloating,
                                 })}
                             >
                                 <Text
                                     style={[
                                         { color: colors.text.error },
-                                        focused ? bodyStyles.medium.xSmall : bodyStyles.medium.medium,
+                                        isFloating
+                                            ? [bodyStyles.medium.xSmall, { paddingLeft: 6 }]
+                                            : bodyStyles.medium.medium,
                                     ]}
                                 >
                                     *
@@ -120,7 +123,12 @@ const TextField = ({
                     placeholderTextColor={colors.ui.neutral.gray80}
                     floatingPlaceholder
                     floatingPlaceholderColor={colors.ui.neutral.gray80}
-                    floatingPlaceholderStyle={focused ? bodyStyles.medium.xSmall : bodyStyles.medium.medium}
+                    floatingPlaceholderStyle={
+                        isFloating ? [bodyStyles.medium.xSmall, { paddingLeft: 12 }] : bodyStyles.medium.medium
+                    }
+                    autoCapitalize="none"
+                    autoComplete="off"
+                    autoCorrect={false}
                     onFocus={() => {
                         setFocused(true);
                         onFocus && onFocus(true);
@@ -147,6 +155,7 @@ const TextField = ({
                     ]}
                     style={{
                         height: 22,
+                        marginTop: -2,
                         marginRight: numberOfIcons * 28,
                         ...bodyStyles.medium.medium,
                     }}
