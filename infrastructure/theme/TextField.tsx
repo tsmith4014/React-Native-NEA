@@ -1,7 +1,7 @@
 import { Error, Success, Warning } from '@/assets/icons';
 import { BodyRegular, bodyStyles } from '@/infrastructure/theme/fonts';
 import clsx from 'clsx';
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { ViewStyle } from 'react-native';
 import { Text, View, TextField as WixTextField, TextFieldProps as WixTextFieldProps } from 'react-native-ui-lib';
 import { useTheme } from 'styled-components/native';
@@ -21,18 +21,21 @@ const HelperTextIcons = {
 
 export type HelperText = { type: HelperTextType; message: string; iconType?: keyof typeof HelperTextIcons };
 
-type TextfieldProps = WixTextFieldProps & {
+type TextfieldProps = Omit<WixTextFieldProps, 'key'> & {
     disabled?: boolean;
-    label: string;
+    label?: string;
     helperText?: string | HelperText;
     icon?: React.ReactElement;
     readOnly?: boolean;
     value?: string;
     outline?: boolean;
     required?: boolean;
+    key?: string;
     forceFocus?: boolean;
+    getRef?: (ref: any) => void;
     onFocus?: (value: boolean) => void;
     containerStyle?: ViewStyle;
+    inputStyle?: ViewStyle;
 };
 
 const TextField = ({
@@ -49,9 +52,13 @@ const TextField = ({
     containerStyle,
     fieldStyle,
     onFocus,
+    key,
     forceFocus,
+    inputStyle,
+    getRef,
     ...props
 }: TextfieldProps) => {
+    const ref = useRef<any>(null);
     const { colors } = useTheme();
     const [focused, setFocused] = useState(false);
     const editable = !disabled;
@@ -77,7 +84,7 @@ const TextField = ({
         numberOfIcons += 1;
     }
     return (
-        <View style={style} className={className}>
+        <View key={key} style={style} className={className}>
             <View
                 className="w-full"
                 style={
@@ -95,6 +102,12 @@ const TextField = ({
                 {/*@ts-ignore*/}
                 <WixTextField
                     {...props}
+                    ref={(el: any) => {
+                        ref.current = el;
+                        if (getRef) {
+                            getRef(el);
+                        }
+                    }}
                     readOnly={readOnly}
                     placeholder={label}
                     leadingAccessory={
@@ -153,11 +166,21 @@ const TextField = ({
                         },
                         containerStyle,
                     ]}
+                    containerProps={{
+                        onTouchStart: () => {
+                            // @ts-ignore
+                            if (!ref?.current?.isFocused()) {
+                                // @ts-ignore
+                                ref?.current?.focus();
+                            }
+                        },
+                    }}
                     style={{
                         height: 22,
                         marginTop: -2,
                         marginRight: numberOfIcons * 28,
                         ...bodyStyles.medium.medium,
+                        ...inputStyle,
                     }}
                     fieldStyle={[
                         {

@@ -5,6 +5,7 @@ import TextField from '@/infrastructure/theme/TextField';
 import { Title } from '@/infrastructure/theme/fonts';
 import useSurvivorStore from '@/store/survivor';
 import { CountryItem } from '@/store/survivor/sign-up';
+import { router } from 'expo-router';
 import React, { useState } from 'react';
 import { Eye, EyeOff } from 'react-native-feather';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -70,7 +71,7 @@ const SignUp = () => {
                     }
                     className="mb-10"
                 />
-                <Button label="Register" />
+                <Button label="Register" onPress={() => router.navigate('/survivor/verify-email')} />
             </View>
         </SafeAreaView>
     );
