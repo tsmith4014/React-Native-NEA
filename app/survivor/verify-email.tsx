@@ -1,4 +1,5 @@
 import { Logo } from '@/assets/icons';
+import BackHeader from '@/infrastructure/theme/BackHeader';
 import Button from '@/infrastructure/theme/Button';
 import SelectField from '@/infrastructure/theme/SelectField';
 import Switch from '@/infrastructure/theme/Switch';
@@ -10,7 +11,7 @@ import { set } from '@firebase/database';
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
 import { useWindowDimensions } from 'react-native';
-import { Eye, EyeOff } from 'react-native-feather';
+import { Eye, EyeOff, HelpCircle } from 'react-native-feather';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { KeyboardAwareScrollView, View } from 'react-native-ui-lib';
 import { useTheme } from 'styled-components/native';
@@ -28,7 +29,8 @@ const VerifyEmail = () => {
     return (
         <SafeAreaView className="h-full flex flex-col" style={{ backgroundColor: colors.brand.primary.springBG }}>
             <KeyboardAwareScrollView className="relative h-full flex flex-col">
-                <View className="w-full my-10 px-4">
+                <BackHeader className="px-4" />
+                <View className="w-full mt-2 mb-10 px-4">
                     <Title.Small>Verify your email</Title.Small>
                     <BodyMedium.Medium className="mt-4">Please enter the 6 digit code sent to</BodyMedium.Medium>
                     <BodyMedium.Medium>{email}</BodyMedium.Medium>

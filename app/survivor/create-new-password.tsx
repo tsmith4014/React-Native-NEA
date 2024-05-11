@@ -1,3 +1,4 @@
+import BackHeader from '@/infrastructure/theme/BackHeader';
 import Button from '@/infrastructure/theme/Button';
 import TextField, { HelperTextType } from '@/infrastructure/theme/TextField';
 import { BodyMedium, Title } from '@/infrastructure/theme/fonts';
@@ -17,7 +18,8 @@ const CreateNewPassword = () => {
     return (
         <SafeAreaView className="h-full flex flex-col" style={{ backgroundColor: colors.brand.primary.springBG }}>
             <KeyboardAwareScrollView className="relative h-full flex flex-col px-4">
-                <View className="w-full my-10">
+                <BackHeader />
+                <View className="w-full mt-2 mb-10">
                     <Title.Small>Create new password</Title.Small>
                     <BodyMedium.Medium className="mt-4">
                         Your new password must be different from previously used password.
