@@ -50,9 +50,14 @@ const Features = () => {
             </Carousel>
             <View className="px-4 mb-10">
                 <Button label="Get started" onPress={() => router.navigate('/survivor/sign-up')} />
-                <View className="flex flex-row items-center justify-center">
-                    <BodyMedium.Medium>Already registered?</BodyMedium.Medium>
-                    <Button variant="text" label="Login" />
+                <View className="flex-row items-center justify-center mt-2">
+                    <BodyMedium.Medium className="mr-1">Already registered?</BodyMedium.Medium>
+                    <Button
+                        label="Login"
+                        variant="text"
+                        style={{ height: 'auto' }}
+                        onPress={() => router.navigate('/survivor/sign-in')}
+                    />
                 </View>
             </View>
         </SafeAreaView>

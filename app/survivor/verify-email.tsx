@@ -5,9 +5,9 @@ import Switch from '@/infrastructure/theme/Switch';
 import TextField from '@/infrastructure/theme/TextField';
 import { BodyMedium, BodySemibold, Title } from '@/infrastructure/theme/fonts';
 import useSurvivorStore from '@/store/survivor';
-import { CountryItem } from '@/store/survivor/sign-up';
+import { CountryItem } from '@/store/survivor/authentication';
 import { set } from '@firebase/database';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
 import { useWindowDimensions } from 'react-native';
 import { Eye, EyeOff } from 'react-native-feather';
@@ -21,6 +21,7 @@ const verifyEmailCodeLength = 6;
 const VerifyEmail = () => {
     const { colors } = useTheme();
     const refs = useRef<any>({});
+    const { nextUrl } = useLocalSearchParams();
     const { email } = useSurvivorStore();
     const [faceId, setFaceId] = useState(true);
     const [codes, setCodes] = useState(Array.from(Array(verifyEmailCodeLength)));
@@ -64,19 +65,32 @@ const VerifyEmail = () => {
                         />
                     ))}
                 </View>
-                <Button className="mx-4" label="Verify" onPress={() => router.navigate('/survivor/home')} />
+                <Button
+                    className="mx-4"
+                    label="Verify"
+                    onPress={() => {
+                        if (nextUrl) {
+                            return router.navigate(`/survivor${nextUrl}`);
+                        }
+                        return router.navigate('/survivor/home');
+                    }}
+                />
                 <View className="flex-row justify-center mt-1">
                     <BodyMedium.Medium className="mr-1">Did not receive code yet?</BodyMedium.Medium>
                     <Button label="Resend code" variant="text" style={{ height: 'auto' }} />
                 </View>
-                <View className="mt-10 px-4 bg-white flex flex-row items-center justify-between h-[62px]">
-                    <BodySemibold.Medium>Enable Touch ID app lock</BodySemibold.Medium>
-                    <Switch value={faceId} onValueChange={(value) => setFaceId(value)} />
-                </View>
-                <BodyMedium.XSmall className="mx-4 mt-1" style={{ color: colors.ui.neutral.gray70 }}>
-                    When enabled, you will need to use Face ID to unlock app. You can change this anytime through app
-                    settings.
-                </BodyMedium.XSmall>
+                {!nextUrl && (
+                    <>
+                        <View className="mt-10 px-4 bg-white flex flex-row items-center justify-between h-[62px]">
+                            <BodySemibold.Medium>Enable Touch ID app lock</BodySemibold.Medium>
+                            <Switch value={faceId} onValueChange={(value) => setFaceId(value)} />
+                        </View>
+                        <BodyMedium.XSmall className="mx-4 mt-1" style={{ color: colors.ui.neutral.gray70 }}>
+                            When enabled, you will need to use Face ID to unlock app. You can change this anytime
+                            through app settings.
+                        </BodyMedium.XSmall>
+                    </>
+                )}
             </KeyboardAwareScrollView>
         </SafeAreaView>
     );
