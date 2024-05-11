@@ -3,7 +3,7 @@ import Button from '@/infrastructure/theme/Button';
 import SelectField from '@/infrastructure/theme/SelectField';
 import Switch from '@/infrastructure/theme/Switch';
 import TextField from '@/infrastructure/theme/TextField';
-import { BodySemibold, Title } from '@/infrastructure/theme/fonts';
+import { BodyMedium, BodySemibold, Title } from '@/infrastructure/theme/fonts';
 import useSurvivorStore from '@/store/survivor';
 import { CountryItem } from '@/store/survivor/sign-up';
 import { set } from '@firebase/database';
@@ -12,7 +12,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useWindowDimensions } from 'react-native';
 import { Eye, EyeOff } from 'react-native-feather';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { View } from 'react-native-ui-lib';
+import { KeyboardAwareScrollView, View } from 'react-native-ui-lib';
 import { useTheme } from 'styled-components/native';
 import countries from './countries';
 
@@ -21,13 +21,16 @@ const verifyEmailCodeLength = 6;
 const VerifyEmail = () => {
     const { colors } = useTheme();
     const refs = useRef<any>({});
+    const { email } = useSurvivorStore();
     const [faceId, setFaceId] = useState(true);
     const [codes, setCodes] = useState(Array.from(Array(verifyEmailCodeLength)));
     return (
         <SafeAreaView className="h-full flex flex-col" style={{ backgroundColor: colors.brand.primary.springBG }}>
-            <View className="relative h-full flex flex-col">
-                <View className="flex flex-row items-center w-full mb-10 p-4">
+            <KeyboardAwareScrollView className="relative h-full flex flex-col">
+                <View className="w-full my-10 px-4">
                     <Title.Small>Verify your email</Title.Small>
+                    <BodyMedium.Medium className="mt-4">Please enter the 6 digit code sent to</BodyMedium.Medium>
+                    <BodyMedium.Medium>{email}</BodyMedium.Medium>
                 </View>
                 <View className="w-full flex flex-row justify-evenly px-2 mb-10">
                     {codes.map((code, index) => (
@@ -61,12 +64,20 @@ const VerifyEmail = () => {
                         />
                     ))}
                 </View>
-                <Button label="Verify" onPress={() => router.navigate('/survivor/home')} />
+                <Button className="mx-4" label="Verify" onPress={() => router.navigate('/survivor/home')} />
+                <View className="flex-row justify-center mt-1">
+                    <BodyMedium.Medium className="mr-1">Did not receive code yet?</BodyMedium.Medium>
+                    <Button label="Resend code" variant="text" style={{ height: 'auto' }} />
+                </View>
                 <View className="mt-10 px-4 bg-white flex flex-row items-center justify-between h-[62px]">
                     <BodySemibold.Medium>Enable Touch ID app lock</BodySemibold.Medium>
                     <Switch value={faceId} onValueChange={(value) => setFaceId(value)} />
                 </View>
-            </View>
+                <BodyMedium.XSmall className="mx-4 mt-1" style={{ color: colors.ui.neutral.gray70 }}>
+                    When enabled, you will need to use Face ID to unlock app. You can change this anytime through app
+                    settings.
+                </BodyMedium.XSmall>
+            </KeyboardAwareScrollView>
         </SafeAreaView>
     );
 };

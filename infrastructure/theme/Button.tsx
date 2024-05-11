@@ -89,7 +89,6 @@ const Button = ({
               : colors.ui.neutral.gray90;
     return (
         <WixButton
-            {...props}
             iconOnRight={iconOnRight}
             label={label}
             labelStyle={[labelStyle]}
@@ -103,6 +102,7 @@ const Button = ({
                           borderStyle: 'solid',
                       }
                     : {},
+                style,
             ]}
             iconSource={
                 IconSource &&
@@ -128,6 +128,7 @@ const Button = ({
             color={color}
             onPressIn={() => setFocused(true)}
             onPressOut={() => setFocused(false)}
+            {...props}
         />
     );
 };
