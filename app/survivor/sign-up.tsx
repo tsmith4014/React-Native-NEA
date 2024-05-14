@@ -6,8 +6,9 @@ import { BodyMedium, BodyRegular, Title } from '@/infrastructure/theme/fonts';
 import shadow from '@/infrastructure/theme/shadow';
 import useSurvivorStore from '@/store/survivor';
 import { CountryItem } from '@/store/survivor/authentication';
+import { getCurrentUser, signInWithRedirect, signOut } from 'aws-amplify/auth';
 import { router } from 'expo-router';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Eye, EyeOff } from 'react-native-feather';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { KeyboardAwareScrollView, View } from 'react-native-ui-lib';
@@ -17,8 +18,13 @@ import countries from './countries';
 const SignUp = () => {
     const { colors } = useTheme();
     const [showPassword, setShowPassword] = useState(false);
-    const { country, email, password, username, updateAuthForm } = useSurvivorStore();
+    const { country, email, password, username, updateAuthForm, handleSignup } = useSurvivorStore();
     const Icon = showPassword ? Eye : EyeOff;
+    useEffect(() => {
+        (async () => {
+            console.log(await getCurrentUser());
+        })();
+    }, []);
     return (
         <SafeAreaView className="h-full flex flex-col" style={{ backgroundColor: colors.brand.primary.springBG }}>
             <KeyboardAwareScrollView className="relative h-full flex flex-col px-4">
@@ -76,7 +82,17 @@ const SignUp = () => {
                     }
                     className="mb-10"
                 />
-                <Button label="Register" onPress={() => router.navigate('/survivor/verify-email')} />
+                <Button
+                    label="Register"
+                    onPress={async () => {
+                        const response = await handleSignup();
+                        if (response) {
+                            if (!response.isSignUpComplete && response.nextStep.signUpStep === 'CONFIRM_SIGN_UP') {
+                                router.navigate('/survivor/verify-email');
+                            }
+                        }
+                    }}
+                />
                 <View className="flex-row flex-wrap items-center justify-center mt-2">
                     <BodyRegular.Small className="mr-1">By registering, you agree to our</BodyRegular.Small>
                     <Button label="Terms & Conditions" variant="text" size="small" style={{ height: 'auto' }} />
@@ -87,7 +103,18 @@ const SignUp = () => {
                     <BodyMedium.Large>Or register using</BodyMedium.Large>
                     <View className="flex-row mt-4">
                         <Button className="mr-4" variant="secondary" IconSource={Apple} />
-                        <Button variant="secondary" IconSource={Google} />
+                        <Button
+                            variant="secondary"
+                            IconSource={Google}
+                            onPress={async () => {
+                                await signOut();
+                                try {
+                                    console.log(await signInWithRedirect({ provider: 'Google' }));
+                                } catch (e) {
+                                    console.error(e);
+                                }
+                            }}
+                        />
                     </View>
                 </View>
                 <View className="flex-row justify-center mt-10">

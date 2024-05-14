@@ -1,21 +1,14 @@
-import { Logo } from '@/assets/icons';
 import BackHeader from '@/infrastructure/theme/BackHeader';
 import Button from '@/infrastructure/theme/Button';
-import SelectField from '@/infrastructure/theme/SelectField';
 import Switch from '@/infrastructure/theme/Switch';
 import TextField from '@/infrastructure/theme/TextField';
 import { BodyMedium, BodySemibold, Title } from '@/infrastructure/theme/fonts';
 import useSurvivorStore from '@/store/survivor';
-import { CountryItem } from '@/store/survivor/authentication';
-import { set } from '@firebase/database';
 import { router, useLocalSearchParams } from 'expo-router';
-import React, { useEffect, useRef, useState } from 'react';
-import { useWindowDimensions } from 'react-native';
-import { Eye, EyeOff, HelpCircle } from 'react-native-feather';
+import React, { useRef, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { KeyboardAwareScrollView, View } from 'react-native-ui-lib';
 import { useTheme } from 'styled-components/native';
-import countries from './countries';
 
 const verifyEmailCodeLength = 6;
 
@@ -23,7 +16,7 @@ const VerifyEmail = () => {
     const { colors } = useTheme();
     const refs = useRef<any>({});
     const { nextUrl } = useLocalSearchParams();
-    const { email } = useSurvivorStore();
+    const { email, password, handleSignUpConfirmation, handleSignIn } = useSurvivorStore();
     const [faceId, setFaceId] = useState(true);
     const [codes, setCodes] = useState(Array.from(Array(verifyEmailCodeLength)));
     return (
@@ -70,11 +63,20 @@ const VerifyEmail = () => {
                 <Button
                     className="mx-4"
                     label="Verify"
-                    onPress={() => {
-                        if (nextUrl) {
-                            return router.navigate(`/survivor${nextUrl}`);
+                    onPress={async () => {
+                        const confirmationResponse = await handleSignUpConfirmation({
+                            email,
+                            confirmationCode: codes.join(''),
+                        });
+                        if (confirmationResponse?.isSignUpComplete) {
+                            const signInResponse = await handleSignIn({ email, password });
+                            if (signInResponse?.isSignedIn) {
+                                if (nextUrl) {
+                                    return router.navigate(`/survivor${nextUrl}`);
+                                }
+                                return router.navigate('/survivor/home');
+                            }
                         }
-                        return router.navigate('/survivor/home');
                     }}
                 />
                 <View className="flex-row justify-center mt-1">
