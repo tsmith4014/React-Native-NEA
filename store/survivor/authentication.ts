@@ -1,4 +1,4 @@
-import { confirmSignUp, signIn, signUp, type ConfirmSignUpInput, type SignInInput, signOut } from 'aws-amplify/auth';
+import { confirmSignUp, signIn, signOut, signUp, type ConfirmSignUpInput, type SignInInput } from 'aws-amplify/auth';
 import { StateCreator } from 'zustand';
 
 export type CountryItem = {
@@ -16,8 +16,8 @@ export interface Authentication {
     signupResponse: any;
     updateAuthForm: (value: Partial<Omit<Authentication, 'updateAuthForm'>>) => void;
     handleSignup: () => ReturnType<typeof handleSignUp>;
-    handleSignUpConfirmation: typeof handleSignUpConfirmation;
-    handleSignIn: typeof handleSignIn;
+    handleSignUpConfirmation: (args: { confirmationCode: string }) => ReturnType<typeof handleSignUpConfirmation>;
+    handleSignIn: () => ReturnType<typeof handleSignIn>;
 }
 
 type SignUpParameters = {
@@ -29,11 +29,10 @@ type SignUpParameters = {
 async function handleSignUp({ username, password, email }: SignUpParameters) {
     try {
         const signupRes = await signUp({
-            username: email,
+            username,
             password,
             options: {
                 userAttributes: {
-                    preferred_username: username,
                     email,
                 },
             },
@@ -46,13 +45,10 @@ async function handleSignUp({ username, password, email }: SignUpParameters) {
     }
 }
 
-async function handleSignUpConfirmation({
-    email,
-    confirmationCode,
-}: Partial<ConfirmSignUpInput> & { email: string; confirmationCode: string }) {
+async function handleSignUpConfirmation({ username, confirmationCode }: ConfirmSignUpInput) {
     try {
         const confirmSignupRes = await confirmSignUp({
-            username: email,
+            username,
             confirmationCode,
         });
         console.log(confirmSignupRes);
@@ -62,10 +58,10 @@ async function handleSignUpConfirmation({
     }
 }
 
-async function handleSignIn({ email, password }: Omit<SignInInput, 'username'> & { email: string }) {
+async function handleSignIn({ username, password }: SignInInput) {
     try {
         await signOut();
-        const signInResponse = await signIn({ username: email, password });
+        const signInResponse = await signIn({ username, password });
         console.log(signInResponse);
         return signInResponse;
     } catch (error) {
@@ -89,8 +85,14 @@ const authSlice: StateCreator<Authentication> = (set, get) => ({
         set({ signupResponse });
         return signupResponse;
     },
-    handleSignUpConfirmation,
-    handleSignIn,
+    handleSignUpConfirmation: async ({ confirmationCode }) => {
+        const { username } = get();
+        return handleSignUpConfirmation({ username, confirmationCode });
+    },
+    handleSignIn: async () => {
+        const { username, password } = get();
+        return handleSignIn({ username, password });
+    },
 });
 
 export default authSlice;

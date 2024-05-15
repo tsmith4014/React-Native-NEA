@@ -102,7 +102,19 @@ const SignUp = () => {
                 <View className="items-center mt-10">
                     <BodyMedium.Large>Or register using</BodyMedium.Large>
                     <View className="flex-row mt-4">
-                        <Button className="mr-4" variant="secondary" IconSource={Apple} />
+                        <Button
+                            className="mr-4"
+                            variant="secondary"
+                            IconSource={Apple}
+                            onPress={async () => {
+                                await signOut();
+                                try {
+                                    console.log(await signInWithRedirect({ provider: 'Apple' }));
+                                } catch (e) {
+                                    console.error(e);
+                                }
+                            }}
+                        />
                         <Button
                             variant="secondary"
                             IconSource={Google}

@@ -65,11 +65,10 @@ const VerifyEmail = () => {
                     label="Verify"
                     onPress={async () => {
                         const confirmationResponse = await handleSignUpConfirmation({
-                            email,
                             confirmationCode: codes.join(''),
                         });
                         if (confirmationResponse?.isSignUpComplete) {
-                            const signInResponse = await handleSignIn({ email, password });
+                            const signInResponse = await handleSignIn();
                             if (signInResponse?.isSignedIn) {
                                 if (nextUrl) {
                                     return router.navigate(`/survivor${nextUrl}`);
