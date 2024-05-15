@@ -1,30 +1,22 @@
 import Button from '@/infrastructure/theme/Button';
 import { BodyMedium, Title } from '@/infrastructure/theme/fonts';
+import useRootStore from '@/store';
 import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Carousel, Image, View } from 'react-native-ui-lib';
 import { useTheme } from 'styled-components/native';
 
-const sections = [
-    {
-        title: 'Live Chat',
-        description: 'Be Anonymous! Talk your heart out with our Volunteers who wont judge you.',
-        image: require('@/assets/images/survivor/live-chat.png'),
-    },
-    {
-        title: 'Save Evidence',
-        description: 'Save Proofs of Abuse/Evidence here safely. You might want to use them later!',
-        image: require('@/assets/images/survivor/save-evidence.png'),
-    },
-    {
-        title: 'Get Help and Support',
-        description: 'Connect with our Lawyer and Counsellors to get help or read up on our Self-help content.',
-        image: require('@/assets/images/survivor/get-help-and-support.png'),
-    },
-] as const;
+type FeaturesProps = {
+    sections: {
+        title: string;
+        description: string;
+        image: any;
+    }[];
+};
 
-const Features = () => {
+const Features = ({ sections }: FeaturesProps) => {
     const { colors } = useTheme();
+    const { selectedRole } = useRootStore();
     return (
         <SafeAreaView className="h-full flex justify-between">
             <Carousel
@@ -49,14 +41,14 @@ const Features = () => {
                 ))}
             </Carousel>
             <View className="px-4 mb-10">
-                <Button label="Get started" onPress={() => router.navigate('/survivor/sign-up')} />
+                <Button label="Get started" onPress={() => router.navigate(`/${selectedRole}/sign-up`)} />
                 <View className="flex-row items-center justify-center mt-2">
                     <BodyMedium.Medium className="mr-1">Already registered?</BodyMedium.Medium>
                     <Button
                         label="Login"
                         variant="text"
                         style={{ height: 'auto' }}
-                        onPress={() => router.navigate('/survivor/sign-in')}
+                        onPress={() => router.navigate(`/${selectedRole}/sign-in`)}
                     />
                 </View>
             </View>

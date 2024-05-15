@@ -3,7 +3,7 @@ import Button from '@/infrastructure/theme/Button';
 import TextField, { HelperTextType } from '@/infrastructure/theme/TextField';
 import { BodyMedium, Title } from '@/infrastructure/theme/fonts';
 import shadow from '@/infrastructure/theme/shadow';
-import useSurvivorStore from '@/store/survivor';
+import useRootStore from '@/store';
 import { router } from 'expo-router';
 import React, { useState } from 'react';
 import { Eye, EyeOff } from 'react-native-feather';
@@ -14,7 +14,8 @@ import { useTheme } from 'styled-components/native';
 const SignIn = () => {
     const { colors } = useTheme();
     const [showPassword, setShowPassword] = useState(false);
-    const { email, password, updateAuthForm } = useSurvivorStore();
+    const { currentUserStore, selectedRole } = useRootStore();
+    const { email, password, updateAuthForm } = currentUserStore!();
     const Icon = showPassword ? Eye : EyeOff;
     return (
         <SafeAreaView className="h-full flex flex-col" style={{ backgroundColor: colors.brand.primary.springBG }}>
@@ -63,7 +64,7 @@ const SignIn = () => {
                         label="Forgot password?"
                         variant="text"
                         style={{ height: 'auto' }}
-                        onPress={() => router.navigate('/survivor/reset-password')}
+                        onPress={() => router.navigate(`/${selectedRole}/reset-password`)}
                     />
                 </View>
                 <View className="items-center mt-10">
@@ -79,7 +80,7 @@ const SignIn = () => {
                         label="Register"
                         variant="text"
                         style={{ height: 'auto' }}
-                        onPress={() => router.navigate('/survivor/sign-up')}
+                        onPress={() => router.navigate(`/${selectedRole}/sign-up`)}
                     />
                 </View>
                 <View className="flex-row justify-center mt-10">

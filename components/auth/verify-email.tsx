@@ -3,7 +3,7 @@ import Button from '@/infrastructure/theme/Button';
 import Switch from '@/infrastructure/theme/Switch';
 import TextField from '@/infrastructure/theme/TextField';
 import { BodyMedium, BodySemibold, Title } from '@/infrastructure/theme/fonts';
-import useSurvivorStore from '@/store/survivor';
+import useRootStore from '@/store';
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useRef, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -16,7 +16,8 @@ const VerifyEmail = () => {
     const { colors } = useTheme();
     const refs = useRef<any>({});
     const { nextUrl } = useLocalSearchParams();
-    const { email, password, handleSignUpConfirmation, handleSignIn } = useSurvivorStore();
+    const { currentUserStore, selectedRole } = useRootStore();
+    const { email, handleSignUpConfirmation, handleSignIn } = currentUserStore!();
     const [faceId, setFaceId] = useState(true);
     const [codes, setCodes] = useState(Array.from(Array(verifyEmailCodeLength)));
     return (
@@ -71,9 +72,9 @@ const VerifyEmail = () => {
                             const signInResponse = await handleSignIn();
                             if (signInResponse?.isSignedIn) {
                                 if (nextUrl) {
-                                    return router.navigate(`/survivor${nextUrl}`);
+                                    return router.navigate(`/${selectedRole}${nextUrl}`);
                                 }
-                                return router.navigate('/survivor/home');
+                                return router.navigate(`/${selectedRole}/home`);
                             }
                         }
                     }}

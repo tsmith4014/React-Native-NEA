@@ -6,7 +6,6 @@ import {
     Montserrat_700Bold,
     useFonts,
 } from '@expo-google-fonts/montserrat';
-import { Amplify } from 'aws-amplify';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
@@ -15,8 +14,7 @@ import { ClickOutsideProvider } from 'react-native-click-outside';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { ThemeProvider } from 'styled-components/native';
-import amplifyconfig from '../cognito/survivor';
-Amplify.configure(amplifyconfig);
+
 // https://docs.expo.dev/router/error-handling/#errorboundary
 export { ErrorBoundary } from 'expo-router';
 

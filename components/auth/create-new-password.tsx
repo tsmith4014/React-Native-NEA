@@ -2,18 +2,20 @@ import BackHeader from '@/infrastructure/theme/BackHeader';
 import Button from '@/infrastructure/theme/Button';
 import TextField, { HelperTextType } from '@/infrastructure/theme/TextField';
 import { BodyMedium, Title } from '@/infrastructure/theme/fonts';
-import useSurvivorStore from '@/store/survivor';
+import { UserRole } from '@/store/user-role';
 import { router } from 'expo-router';
 import React, { useState } from 'react';
 import { Eye, EyeOff } from 'react-native-feather';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { KeyboardAwareScrollView, View } from 'react-native-ui-lib';
 import { useTheme } from 'styled-components/native';
+import useRootStore from "@/store";
 
-const CreateNewPassword = () => {
+const CreateNewPassword = ({ role }: { role: UserRole }) => {
     const { colors } = useTheme();
     const [showPassword, setShowPassword] = useState(false);
-    const { newPassword, newPasswordConfirm, updateAuthForm } = useSurvivorStore();
+    const { currentUserStore } = useRootStore();
+    const { newPassword, newPasswordConfirm, updateAuthForm } = currentUserStore!();
     const Icon = showPassword ? Eye : EyeOff;
     return (
         <SafeAreaView className="h-full flex flex-col" style={{ backgroundColor: colors.brand.primary.springBG }}>
@@ -72,7 +74,7 @@ const CreateNewPassword = () => {
                 <Button
                     label="Reset password"
                     onPress={() => {
-                        router.navigate('/survivor/home');
+                        router.navigate(`/${role}/home`);
                     }}
                 />
             </KeyboardAwareScrollView>

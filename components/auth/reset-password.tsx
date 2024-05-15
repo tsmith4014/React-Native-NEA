@@ -2,7 +2,7 @@ import BackHeader from '@/infrastructure/theme/BackHeader';
 import Button from '@/infrastructure/theme/Button';
 import TextField from '@/infrastructure/theme/TextField';
 import { BodyMedium, Title } from '@/infrastructure/theme/fonts';
-import useSurvivorStore from '@/store/survivor';
+import useRootStore from '@/store';
 import { router } from 'expo-router';
 import React from 'react';
 import { HelpCircle } from 'react-native-feather';
@@ -12,7 +12,8 @@ import { useTheme } from 'styled-components/native';
 
 const ResetPassword = () => {
     const { colors } = useTheme();
-    const { email, updateAuthForm } = useSurvivorStore();
+    const { currentUserStore, selectedRole } = useRootStore();
+    const { email, updateAuthForm } = currentUserStore!();
     return (
         <SafeAreaView className="h-full flex flex-col" style={{ backgroundColor: colors.brand.primary.springBG }}>
             <KeyboardAwareScrollView className="relative h-full flex flex-col px-4">
@@ -33,7 +34,7 @@ const ResetPassword = () => {
                 />
                 <Button
                     label="Send code"
-                    onPress={() => router.navigate('/survivor/verify-email?nextUrl=/create-new-password')}
+                    onPress={() => router.navigate(`/${selectedRole}/verify-email?nextUrl=/create-new-password`)}
                 />
             </KeyboardAwareScrollView>
         </SafeAreaView>

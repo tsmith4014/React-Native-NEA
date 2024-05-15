@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import useLawyerStore from './lawyer';
+import localAuthenticationSlice, { LocalAuthenticationSlice } from './local-authentication';
 import useSurvivorStore from './survivor';
 import useTherapistStore from './therapist';
 import createUserRoleSlice, { UserRole, UserRoleSlice } from './user-role';
@@ -16,10 +17,12 @@ export type RootState = {
         | typeof useVolunteerStore
         | typeof useLawyerStore
         | typeof useTherapistStore;
-} & UserRoleSlice;
+} & UserRoleSlice &
+    LocalAuthenticationSlice;
 
 const useRootStore = create<RootState>()((set, ...a) => ({
     ...createUserRoleSlice(set, ...a),
+    ...localAuthenticationSlice(set, ...a),
     survivor: useSurvivorStore,
     volunteer: useVolunteerStore,
     lawyer: useLawyerStore,

@@ -1,5 +1,8 @@
+import amplifySurvivorConfig from '@/cognito/survivor';
 import shadow from '@/infrastructure/theme/shadow';
+import useRootStore from '@/store';
 import { UserRole } from '@/store/user-role';
+import { Amplify } from 'aws-amplify';
 import * as LocalAuthentication from 'expo-local-authentication';
 import { router } from 'expo-router';
 import { Pressable } from 'react-native';
@@ -29,13 +32,26 @@ const sections = [
     },
 ] as const;
 
+const amplifyConfig: Record<UserRole, typeof amplifySurvivorConfig> = {
+    [UserRole.survivor]: amplifySurvivorConfig,
+    [UserRole.volunteer]: amplifySurvivorConfig,
+    [UserRole.lawyer]: amplifySurvivorConfig,
+    [UserRole.therapist]: amplifySurvivorConfig,
+};
+
 const WalkthroughScreen = () => {
-    const authenticate = async () => {
-        // const check = await LocalAuthentication.isEnrolledAsync();
-        // console.info('check', JSON.stringify(check));
-        // const result = await LocalAuthentication.authenticateAsync({ promptMessage: 'Please authenticate first' });
-        // console.info('result', JSON.stringify(result));
-        router.navigate('/survivor/features');
+    const { switchRole, setLocalAuthenticationDone } = useRootStore();
+    const onSelectRole = async (role: UserRole) => {
+        switchRole(role);
+        Amplify.configure(amplifyConfig[role]);
+        const check = await LocalAuthentication.isEnrolledAsync();
+        if (check) {
+            const result = await LocalAuthentication.authenticateAsync({ promptMessage: 'Please authenticate first' });
+            if (result.success) {
+                setLocalAuthenticationDone(true);
+                router.navigate(`/${role}/features`);
+            }
+        }
     };
     return (
         <SafeAreaView>
@@ -48,7 +64,7 @@ const WalkthroughScreen = () => {
                             className="bg-spring50 px-8 py-4 rounded-2xl flex items-center justify-center"
                             style={shadow.elevation2}
                             onPress={() => {
-                                authenticate();
+                                onSelectRole(role);
                             }}
                         >
                             <Image resizeMode="contain" className="h-14 w-14 mb-4" source={image} />

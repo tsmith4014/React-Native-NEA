@@ -4,7 +4,7 @@ import SelectField from '@/infrastructure/theme/SelectField';
 import TextField, { HelperTextType } from '@/infrastructure/theme/TextField';
 import { BodyMedium, BodyRegular, Title } from '@/infrastructure/theme/fonts';
 import shadow from '@/infrastructure/theme/shadow';
-import useSurvivorStore from '@/store/survivor';
+import useRootStore from '@/store';
 import { CountryItem } from '@/store/survivor/authentication';
 import { getCurrentUser, signInWithRedirect, signOut } from 'aws-amplify/auth';
 import { router } from 'expo-router';
@@ -18,7 +18,8 @@ import countries from './countries';
 const SignUp = () => {
     const { colors } = useTheme();
     const [showPassword, setShowPassword] = useState(false);
-    const { country, email, password, username, updateAuthForm, handleSignup } = useSurvivorStore();
+    const { currentUserStore, selectedRole } = useRootStore();
+    const { country, email, password, username, updateAuthForm, handleSignup } = currentUserStore!();
     const Icon = showPassword ? Eye : EyeOff;
     useEffect(() => {
         (async () => {
@@ -88,7 +89,7 @@ const SignUp = () => {
                         const response = await handleSignup();
                         if (response) {
                             if (!response.isSignUpComplete && response.nextStep.signUpStep === 'CONFIRM_SIGN_UP') {
-                                router.navigate('/survivor/verify-email');
+                                router.navigate(`/${selectedRole}/verify-email`);
                             }
                         }
                     }}
@@ -135,7 +136,7 @@ const SignUp = () => {
                         label="Login"
                         variant="text"
                         style={{ height: 'auto' }}
-                        onPress={() => router.navigate('/survivor/sign-in')}
+                        onPress={() => router.navigate(`/${selectedRole}/sign-in`)}
                     />
                 </View>
                 <View className="flex-row justify-center mt-10">
