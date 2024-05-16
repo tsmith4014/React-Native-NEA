@@ -1,11 +1,11 @@
 export default {
     Auth: {
         Cognito: {
-            userPoolClientId: '14pom7313h1mpgssf709ihg2v7',
-            userPoolId: 'us-east-1_ceR47U0pC',
+            userPoolClientId: 'fcqohsli82pvpgt9t0ag8ht3c',
+            userPoolId: 'us-east-1_x5WGjEsku',
             loginWith: {
                 oauth: {
-                    domain: 'nevereveralone-survivor.auth.us-east-1.amazoncognito.com',
+                    domain: 'nevereveralone-therapist.auth.us-east-1.amazoncognito.com',
                     scopes: ['openid', 'email', 'phone', 'profile', 'aws.cognito.signin.user.admin'],
                     redirectSignIn: ['nevereveralone://'],
                     redirectSignOut: ['nevereveralone://'],

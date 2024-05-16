@@ -1,4 +1,7 @@
+import amplifyLawyerConfig from '@/cognito/lawyer';
 import amplifySurvivorConfig from '@/cognito/survivor';
+import amplifyTherapistConfig from '@/cognito/therapist';
+import amplifyVolunteerConfig from '@/cognito/volunteer';
 import shadow from '@/infrastructure/theme/shadow';
 import useRootStore from '@/store';
 import { UserRole } from '@/store/user-role';
@@ -34,9 +37,9 @@ const sections = [
 
 const amplifyConfig: Record<UserRole, typeof amplifySurvivorConfig> = {
     [UserRole.survivor]: amplifySurvivorConfig,
-    [UserRole.volunteer]: amplifySurvivorConfig,
-    [UserRole.lawyer]: amplifySurvivorConfig,
-    [UserRole.therapist]: amplifySurvivorConfig,
+    [UserRole.volunteer]: amplifyVolunteerConfig,
+    [UserRole.lawyer]: amplifyLawyerConfig,
+    [UserRole.therapist]: amplifyTherapistConfig,
 };
 
 const WalkthroughScreen = () => {
