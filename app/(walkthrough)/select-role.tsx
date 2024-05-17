@@ -6,9 +6,11 @@ import shadow from '@/infrastructure/theme/shadow';
 import useRootStore from '@/store';
 import { UserRole } from '@/store/user-role';
 import { Amplify } from 'aws-amplify';
+import { signOut } from 'aws-amplify/auth';
 import * as LocalAuthentication from 'expo-local-authentication';
 import { router } from 'expo-router';
-import { Pressable } from 'react-native';
+import { useEffect } from 'react';
+import { Alert, Pressable } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Image, Text, View } from 'react-native-ui-lib';
 
@@ -43,19 +45,54 @@ const amplifyConfig: Record<UserRole, typeof amplifySurvivorConfig> = {
 };
 
 const WalkthroughScreen = () => {
-    const { switchRole, setLocalAuthenticationDone } = useRootStore();
+    const {
+        switchRole,
+        currentUserStore,
+        selectedRole,
+        isLocalAuthenticationEnabled,
+        setIsLocalAuthenticationEnabled,
+        getCurrentUser,
+    } = useRootStore();
     const onSelectRole = async (role: UserRole) => {
         switchRole(role);
         Amplify.configure(amplifyConfig[role]);
-        const check = await LocalAuthentication.isEnrolledAsync();
-        if (check) {
-            const result = await LocalAuthentication.authenticateAsync({ promptMessage: 'Please authenticate first' });
-            if (result.success) {
-                setLocalAuthenticationDone(true);
-                router.navigate(`/${role}/features`);
-            }
+        // undefined or null
+        if (isLocalAuthenticationEnabled == undefined) {
+            const check = await LocalAuthentication.isEnrolledAsync();
+            setIsLocalAuthenticationEnabled(check);
         }
     };
+    useEffect(() => {
+        (async () => {
+            if (currentUserStore) {
+                const user = await getCurrentUser();
+                if (user) {
+                    if (isLocalAuthenticationEnabled) {
+                        const result = await LocalAuthentication.authenticateAsync({
+                            promptMessage: 'Please authenticate first',
+                        });
+                        if (result.success) {
+                            router.navigate(`/${selectedRole}/home`);
+                        }
+                    } else {
+                        await signOut();
+                        Alert.alert(
+                            'FaceID is not enabled for the app',
+                            'Please go to app settings and enable FaceID for faster login experience',
+                            [
+                                {
+                                    text: 'OK',
+                                    onPress: () => router.navigate(`/${selectedRole}/sign-in`),
+                                },
+                            ],
+                        );
+                    }
+                } else {
+                    router.navigate(`/${selectedRole}/features`);
+                }
+            }
+        })();
+    }, [currentUserStore, isLocalAuthenticationEnabled, selectedRole, getCurrentUser]);
     return (
         <SafeAreaView>
             <View className="min-h-full flex flex-col gap-6 p-4 mt-2 justify-start">

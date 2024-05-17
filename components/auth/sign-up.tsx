@@ -6,11 +6,12 @@ import { BodyMedium, BodyRegular, Title } from '@/infrastructure/theme/fonts';
 import shadow from '@/infrastructure/theme/shadow';
 import useRootStore from '@/store';
 import { CountryItem } from '@/store/survivor/authentication';
-import { getCurrentUser, signInWithRedirect, signOut } from 'aws-amplify/auth';
+import { signIn, signInWithRedirect, signOut } from 'aws-amplify/auth';
 import { router } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { Eye, EyeOff } from 'react-native-feather';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import Toast from 'react-native-toast-message';
 import { KeyboardAwareScrollView, View } from 'react-native-ui-lib';
 import { useTheme } from 'styled-components/native';
 import countries from './countries';
@@ -18,14 +19,11 @@ import countries from './countries';
 const SignUp = () => {
     const { colors } = useTheme();
     const [showPassword, setShowPassword] = useState(false);
-    const { currentUserStore, selectedRole } = useRootStore();
-    const { country, email, password, username, updateAuthForm, handleSignup } = currentUserStore!();
+    const [errorMessage, setErrorMessage] = useState({ username: '', email: '', password: '' });
+    const { currentUserStore, selectedRole, redirectIfSignedIn } = useRootStore();
+    const { country, email, password, username, updateAuthForm, handleSignup, handleSignIn } = currentUserStore!();
+    const isDisabled = !(email && username && password);
     const Icon = showPassword ? Eye : EyeOff;
-    useEffect(() => {
-        (async () => {
-            console.log(await getCurrentUser());
-        })();
-    }, []);
     return (
         <SafeAreaView className="h-full flex flex-col" style={{ backgroundColor: colors.brand.primary.springBG }}>
             <KeyboardAwareScrollView className="relative h-full flex flex-col px-4">
@@ -49,6 +47,25 @@ const SignUp = () => {
                     onChangeText={(value) => updateAuthForm({ email: value })}
                     value={email}
                     className="mb-4"
+                    helperText={
+                        errorMessage.email
+                            ? {
+                                  type: HelperTextType.error,
+                                  message: errorMessage.email,
+                              }
+                            : undefined
+                    }
+                    onBlur={async () => {
+                        if (email) {
+                            const valid = String(email)
+                                .toLowerCase()
+                                .match(/^[^@\s]+@[^@\s]+\.[^@\s]+$/);
+                            setErrorMessage((state) => ({
+                                ...state,
+                                email: !valid ? 'Email address is not valid' : '',
+                            }));
+                        }
+                    }}
                 />
                 <TextField
                     required
@@ -56,14 +73,49 @@ const SignUp = () => {
                     onChangeText={(value) => updateAuthForm({ username: value })}
                     value={username}
                     className="mb-4"
+                    helperText={
+                        errorMessage.username
+                            ? {
+                                  type: HelperTextType.error,
+                                  message: errorMessage.username,
+                              }
+                            : undefined
+                    }
                 />
                 <TextField
                     required
                     label="Password"
-                    onChangeText={(value) => updateAuthForm({ password: value })}
-                    helperText={{
-                        type: HelperTextType.normal,
-                        message: 'Minimum 8 characters, have one number and one special character.',
+                    onChangeText={(value) => {
+                        const newLength = value.length;
+                        const previousText = password.substring(0, newLength);
+                        const newText = value.substring(password.length);
+                        if (!newText.includes('●')) {
+                            updateAuthForm({ password: previousText + newText });
+                        }
+                    }}
+                    helperText={
+                        errorMessage.password
+                            ? {
+                                  type: HelperTextType.error,
+                                  message: errorMessage.password,
+                              }
+                            : {
+                                  type: HelperTextType.normal,
+                                  message: 'Minimum 8 characters, have one number and one special character.',
+                              }
+                    }
+                    onBlur={() => {
+                        if (password) {
+                            const valid = String(password)
+                                .toLowerCase()
+                                .match(/^(?=.*[0-9])(?=.*[a-z])(?=.*\W)(?!.* ).{8,100}$/);
+                            setErrorMessage((state) => ({
+                                ...state,
+                                password: !valid
+                                    ? 'Password requires minimum 8 characters, have one number and one special character.'
+                                    : '',
+                            }));
+                        }
                     }}
                     value={
                         showPassword
@@ -85,12 +137,25 @@ const SignUp = () => {
                 />
                 <Button
                     label="Register"
+                    disabled={isDisabled}
                     onPress={async () => {
-                        const response = await handleSignup();
-                        if (response) {
-                            if (!response.isSignUpComplete && response.nextStep.signUpStep === 'CONFIRM_SIGN_UP') {
-                                router.navigate(`/${selectedRole}/verify-email`);
+                        try {
+                            const response = await handleSignup();
+                            if (response) {
+                                if (!response.isSignUpComplete && response.nextStep.signUpStep === 'CONFIRM_SIGN_UP') {
+                                    return router.navigate(`/${selectedRole}/verify-email`);
+                                } else if (response.isSignUpComplete) {
+                                    await handleSignIn();
+                                    return await redirectIfSignedIn();
+                                }
+                                throw new Error('Signup Error!!');
                             }
+                        } catch (error: any) {
+                            console.error(error);
+                            Toast.show({
+                                type: 'error',
+                                text1: error.message,
+                            });
                         }
                     }}
                 />
@@ -108,24 +173,24 @@ const SignUp = () => {
                             variant="secondary"
                             IconSource={Apple}
                             onPress={async () => {
-                                await signOut();
                                 try {
-                                    console.log(await signInWithRedirect({ provider: 'Apple' }));
+                                    await signInWithRedirect({ provider: 'Apple' });
                                 } catch (e) {
                                     console.error(e);
                                 }
+                                await redirectIfSignedIn();
                             }}
                         />
                         <Button
                             variant="secondary"
                             IconSource={Google}
                             onPress={async () => {
-                                await signOut();
                                 try {
-                                    console.log(await signInWithRedirect({ provider: 'Google' }));
+                                    await signInWithRedirect({ provider: 'Google' });
                                 } catch (e) {
                                     console.error(e);
                                 }
+                                await redirectIfSignedIn();
                             }}
                         />
                     </View>

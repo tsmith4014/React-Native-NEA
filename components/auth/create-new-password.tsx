@@ -2,20 +2,48 @@ import BackHeader from '@/infrastructure/theme/BackHeader';
 import Button from '@/infrastructure/theme/Button';
 import TextField, { HelperTextType } from '@/infrastructure/theme/TextField';
 import { BodyMedium, Title } from '@/infrastructure/theme/fonts';
-import { UserRole } from '@/store/user-role';
+import useRootStore from '@/store';
+import { confirmResetPassword } from '@aws-amplify/auth';
 import { router } from 'expo-router';
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { Eye, EyeOff } from 'react-native-feather';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import Toast from 'react-native-toast-message';
 import { KeyboardAwareScrollView, View } from 'react-native-ui-lib';
 import { useTheme } from 'styled-components/native';
-import useRootStore from "@/store";
 
-const CreateNewPassword = ({ role }: { role: UserRole }) => {
+const CreateNewPassword = () => {
     const { colors } = useTheme();
     const [showPassword, setShowPassword] = useState(false);
-    const { currentUserStore } = useRootStore();
-    const { newPassword, newPasswordConfirm, updateAuthForm } = currentUserStore!();
+    const [errorMessage, setErrorMessage] = useState({ newPassword: '', newPasswordConfirm: '' });
+    const { currentUserStore, selectedRole, getCurrentUser } = useRootStore();
+    const { username, newPassword, newPasswordConfirm, updateAuthForm, resetPasswordConfirmationCode } =
+        currentUserStore!();
+    const onValidate = useCallback(() => {
+        if (newPassword && newPasswordConfirm) {
+            const valid = String(newPassword)
+                .toLowerCase()
+                .match(/^(?=.*[0-9])(?=.*[a-z])(?=.*\W)(?!.* ).{8,100}$/);
+            if (!valid) {
+                setErrorMessage((state) => ({
+                    ...state,
+                    newPassword: 'Password requires minimum 8 characters, have one number and one special character.',
+                }));
+            } else if (valid && newPasswordConfirm !== newPassword) {
+                setErrorMessage((state) => ({
+                    ...state,
+                    newPassword: 'Password do not match',
+                    newPasswordConfirm: 'Password do not match',
+                }));
+            } else if (errorMessage.newPassword || errorMessage.newPasswordConfirm) {
+                setErrorMessage((state) => ({
+                    ...state,
+                    newPassword: '',
+                    newPasswordConfirm: '',
+                }));
+            }
+        }
+    }, [newPassword, newPasswordConfirm, errorMessage]);
     const Icon = showPassword ? Eye : EyeOff;
     return (
         <SafeAreaView className="h-full flex flex-col" style={{ backgroundColor: colors.brand.primary.springBG }}>
@@ -30,11 +58,23 @@ const CreateNewPassword = ({ role }: { role: UserRole }) => {
                 <TextField
                     required
                     label="Password"
-                    onChangeText={(value) => updateAuthForm({ newPassword: value })}
-                    helperText={{
-                        type: HelperTextType.normal,
-                        message: 'Minimum 8 characters, have one number and one special character.',
+                    onChangeText={(value) => {
+                        const newLength = value.length;
+                        const previousText = newPassword.substring(0, newLength);
+                        const newText = value.substring(newPassword.length);
+                        if (!newText.includes('●')) {
+                            updateAuthForm({ newPassword: previousText + newText });
+                        }
                     }}
+                    helperText={
+                        errorMessage.newPassword
+                            ? { type: HelperTextType.error, message: errorMessage.newPassword }
+                            : {
+                                  type: HelperTextType.normal,
+                                  message: 'Minimum 8 characters, have one number and one special character.',
+                              }
+                    }
+                    onBlur={onValidate}
                     value={
                         showPassword
                             ? newPassword
@@ -56,11 +96,23 @@ const CreateNewPassword = ({ role }: { role: UserRole }) => {
                 <TextField
                     required
                     label="Password"
-                    onChangeText={(value) => updateAuthForm({ newPasswordConfirm: value })}
-                    helperText={{
-                        type: HelperTextType.normal,
-                        message: 'Both password should match.',
+                    onChangeText={(value) => {
+                        const newLength = value.length;
+                        const previousText = newPasswordConfirm.substring(0, newLength);
+                        const newText = value.substring(newPasswordConfirm.length);
+                        if (!newText.includes('●')) {
+                            updateAuthForm({ newPasswordConfirm: previousText + newText });
+                        }
                     }}
+                    helperText={
+                        errorMessage.newPasswordConfirm
+                            ? { type: HelperTextType.error, message: errorMessage.newPasswordConfirm }
+                            : {
+                                  type: HelperTextType.normal,
+                                  message: 'Both password should match.',
+                              }
+                    }
+                    onBlur={onValidate}
                     value={
                         showPassword
                             ? newPasswordConfirm
@@ -73,8 +125,26 @@ const CreateNewPassword = ({ role }: { role: UserRole }) => {
                 />
                 <Button
                     label="Reset password"
-                    onPress={() => {
-                        router.navigate(`/${role}/home`);
+                    disabled={!!(errorMessage.newPassword || errorMessage.newPasswordConfirm)}
+                    onPress={async () => {
+                        try {
+                            await confirmResetPassword({
+                                username,
+                                confirmationCode: resetPasswordConfirmationCode,
+                                newPassword,
+                            });
+                            router.navigate(`/${selectedRole}/sign-in`);
+                            Toast.show({
+                                type: 'success',
+                                text1: 'Password successfully updated!',
+                            });
+                        } catch (error: any) {
+                            router.back();
+                            Toast.show({
+                                type: 'error',
+                                text1: error.message,
+                            });
+                        }
                     }}
                 />
             </KeyboardAwareScrollView>

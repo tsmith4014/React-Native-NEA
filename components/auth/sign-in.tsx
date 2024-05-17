@@ -1,21 +1,23 @@
 import { Apple, Google, Logo } from '@/assets/icons';
 import Button from '@/infrastructure/theme/Button';
-import TextField, { HelperTextType } from '@/infrastructure/theme/TextField';
+import TextField from '@/infrastructure/theme/TextField';
 import { BodyMedium, Title } from '@/infrastructure/theme/fonts';
 import shadow from '@/infrastructure/theme/shadow';
 import useRootStore from '@/store';
+import { signInWithRedirect } from 'aws-amplify/auth';
 import { router } from 'expo-router';
 import React, { useState } from 'react';
 import { Eye, EyeOff } from 'react-native-feather';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import Toast from 'react-native-toast-message';
 import { KeyboardAwareScrollView, View } from 'react-native-ui-lib';
 import { useTheme } from 'styled-components/native';
 
 const SignIn = () => {
     const { colors } = useTheme();
     const [showPassword, setShowPassword] = useState(false);
-    const { currentUserStore, selectedRole } = useRootStore();
-    const { email, password, updateAuthForm } = currentUserStore!();
+    const { currentUserStore, selectedRole, redirectIfSignedIn } = useRootStore();
+    const { username, password, updateAuthForm, handleSignIn } = currentUserStore!();
     const Icon = showPassword ? Eye : EyeOff;
     return (
         <SafeAreaView className="h-full flex flex-col" style={{ backgroundColor: colors.brand.primary.springBG }}>
@@ -26,15 +28,22 @@ const SignIn = () => {
                 </View>
                 <TextField
                     required
-                    label="Email"
-                    onChangeText={(value) => updateAuthForm({ email: value })}
-                    value={email}
+                    label="User name"
+                    onChangeText={(value) => updateAuthForm({ username: value })}
+                    value={username}
                     className="mb-4"
                 />
                 <TextField
                     required
                     label="Password"
-                    onChangeText={(value) => updateAuthForm({ password: value })}
+                    onChangeText={(value) => {
+                        const newLength = value.length;
+                        const previousText = password.substring(0, newLength);
+                        const newText = value.substring(password.length);
+                        if (!newText.includes('●')) {
+                            updateAuthForm({ password: previousText + newText });
+                        }
+                    }}
                     value={
                         showPassword
                             ? password
@@ -55,8 +64,24 @@ const SignIn = () => {
                 />
                 <Button
                     label="Login"
-                    onPress={() => {
-                        return;
+                    onPress={async () => {
+                        try {
+                            const { isSignedIn, nextStep } = await handleSignIn();
+                            if (isSignedIn) {
+                                return router.navigate(`/${selectedRole}/home`);
+                            }
+                            // @ts-ignore
+                            if (nextStep.signInStep === 'CONFIRM_SIGN_UP') {
+                                return router.navigate(`/${selectedRole}/verify-email`);
+                            }
+                            throw new Error('Sorry! something went wrong! Please try again');
+                        } catch (error: any) {
+                            console.error(error);
+                            Toast.show({
+                                type: 'error',
+                                text1: error.message,
+                            });
+                        }
                     }}
                 />
                 <View className="flex-row flex-wrap items-center justify-center mt-2">
@@ -70,8 +95,31 @@ const SignIn = () => {
                 <View className="items-center mt-10">
                     <BodyMedium.Large>Or login using</BodyMedium.Large>
                     <View className="flex-row mt-4">
-                        <Button className="mr-4" variant="secondary" IconSource={Apple} />
-                        <Button variant="secondary" IconSource={Google} />
+                        <Button
+                            className="mr-4"
+                            variant="secondary"
+                            IconSource={Apple}
+                            onPress={async () => {
+                                try {
+                                    await signInWithRedirect({ provider: 'Apple' });
+                                } catch (e) {
+                                    console.error(e);
+                                }
+                                await redirectIfSignedIn();
+                            }}
+                        />
+                        <Button
+                            variant="secondary"
+                            IconSource={Google}
+                            onPress={async () => {
+                                try {
+                                    await signInWithRedirect({ provider: 'Google' });
+                                } catch (e) {
+                                    console.error(e);
+                                }
+                                await redirectIfSignedIn();
+                            }}
+                        />
                     </View>
                 </View>
                 <View className="flex-row justify-center mt-10">

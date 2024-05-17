@@ -13,6 +13,7 @@ import { useColorScheme } from 'react-native';
 import { ClickOutsideProvider } from 'react-native-click-outside';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import Toast from 'react-native-toast-message';
 import { ThemeProvider } from 'styled-components/native';
 
 // https://docs.expo.dev/router/error-handling/#errorboundary
@@ -37,6 +38,7 @@ const RootLayoutNav = () => {
                             {/*<Stack.Screen name="walkthrough/index" options={{ headerShown: false }} />*/}
                             {/*<Stack.Screen name="(tabs)" options={{ headerShown: false }} />*/}
                         </Stack>
+                        <Toast position="bottom" bottomOffset={20} />
                     </SafeAreaProvider>
                 </ThemeProvider>
             </GestureHandlerRootView>

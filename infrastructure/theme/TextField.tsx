@@ -52,6 +52,7 @@ const TextField = ({
     containerStyle,
     fieldStyle,
     onFocus,
+    onBlur,
     key,
     forceFocus,
     inputStyle,
@@ -146,9 +147,10 @@ const TextField = ({
                         setFocused(true);
                         onFocus && onFocus(true);
                     }}
-                    onBlur={() => {
+                    onBlur={(...args) => {
                         setFocused(false);
-                        onFocus && onFocus(false);
+                        onFocus && onFocus(true);
+                        onBlur && onBlur(...args);
                     }}
                     containerStyle={[
                         {

@@ -1,19 +1,25 @@
+import Button from '@/infrastructure/theme/Button';
 import { Title } from '@/infrastructure/theme/fonts';
-import { getCurrentUser } from 'aws-amplify/auth';
-import { useEffect } from 'react';
+import useRootStore from '@/store';
+import { signOut } from 'aws-amplify/auth';
+import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useTheme } from 'styled-components/native';
 
 const Home = () => {
-    const { colors } = useTheme();
-    useEffect(() => {
-        (async () => {
-            console.log(await getCurrentUser());
-        })();
-    }, []);
+    const { currentUserStore, switchRole } = useRootStore();
+    const { reset } = currentUserStore!();
     return (
         <SafeAreaView className="h-full flex justify-between">
             <Title.Large>Home page</Title.Large>
+            <Button
+                label="Sign out"
+                onPress={async () => {
+                    await signOut();
+                    reset();
+                    router.dismissAll();
+                    switchRole(undefined);
+                }}
+            />
         </SafeAreaView>
     );
 };

@@ -1,8 +1,8 @@
 import SecondSplash from '@/assets/images/splash.png';
 import { FadeInView } from '@/components/animations/fade.animation';
 import { SplashAnimation } from '@/components/animations/splash.animation';
-import { router } from 'expo-router';
-import { useEffect } from 'react';
+import { router, useFocusEffect } from 'expo-router';
+import { useCallback } from 'react';
 import { ImageBackground, Text } from 'react-native';
 import Animated from 'react-native-reanimated';
 import styled from 'styled-components/native';
@@ -19,11 +19,13 @@ const SplashImage = styled(ImageBackground)`
 `;
 
 const Walkthrough = () => {
-    useEffect(() => {
-        setTimeout(() => {
-            router.navigate('/select-role');
-        }, 2000);
-    }, []);
+    useFocusEffect(
+        useCallback(() => {
+            setTimeout(() => {
+                router.navigate('/select-role');
+            }, 2000);
+        }, []),
+    );
     return (
         <>
             <SplashContainer>

@@ -1,14 +1,14 @@
 import { StateCreator } from 'zustand';
 
 export interface LocalAuthenticationSlice {
-    localAuthenticationDone: boolean;
-    setLocalAuthenticationDone: (localAuthenticationDone?: boolean) => void;
+    isLocalAuthenticationEnabled?: boolean;
+    setIsLocalAuthenticationEnabled: (localAuthenticationEnabled: boolean) => void;
 }
 
 const localAuthenticationSlice: StateCreator<LocalAuthenticationSlice> = (set) => ({
-    localAuthenticationDone: false,
-    setLocalAuthenticationDone: (localAuthenticationDone = true) => {
-        set({ localAuthenticationDone });
+    isLocalAuthenticationEnabled: undefined,
+    setIsLocalAuthenticationEnabled: (isLocalAuthenticationEnabled = true) => {
+        set({ isLocalAuthenticationEnabled });
     },
 });
 
