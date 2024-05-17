@@ -2,7 +2,7 @@
     "expo": {
         "name": "nevereveralonemobile",
         "slug": "nevereveralonemobile",
-        "version": "1.0.1",
+        "version": "1.0.2",
         "orientation": "portrait",
         "icon": "./assets/images/icon.png",
         "scheme": "nevereveralone",
@@ -21,6 +21,9 @@
             "bundleIdentifier": "com.anonymous.nevereveralonemobile",
             "config": {
                 "usesNonExemptEncryption": false
+            },
+            "entitlements": {
+                "com.apple.developer.applesignin": ["Default"]
             }
         },
         "android": {

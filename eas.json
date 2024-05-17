@@ -23,6 +23,12 @@
         }
     },
     "submit": {
-        "production": {}
+        "production": {
+            "ios": {
+                "appleId": "nevereveralonedev@gmail.com",
+                "ascAppId": "6502615055",
+                "appleTeamId": "LBX5Z3C862"
+            }
+        }
     }
 }
