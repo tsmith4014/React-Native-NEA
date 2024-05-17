@@ -1,6 +1,7 @@
+import { userRoleAmplifyStorage } from '@/store/amplifyStorage';
 import createSharedSlice, { Shared } from '@/store/shared';
+import { UserRole } from '@/store/types';
 import zustandStorage from '@/store/zustandStorage';
-import { signOut } from 'aws-amplify/auth';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 import authSlice, { Authentication } from './authentication';
@@ -19,7 +20,7 @@ const useLawyerStore = create<LawyerStore>()(
             return {
                 ...initialState,
                 handleSignOut: async () => {
-                    await signOut();
+                    userRoleAmplifyStorage[UserRole.lawyer]?.clearAll();
                     a[0]().reset();
                 },
                 reset: () => {

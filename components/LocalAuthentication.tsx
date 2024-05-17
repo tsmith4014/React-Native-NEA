@@ -1,4 +1,5 @@
 import useRootStore from '@/store';
+import { retry } from '@lifeomic/attempt';
 import * as ExpoLocalAuthentication from 'expo-local-authentication';
 import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
@@ -15,11 +16,28 @@ const LocalAuthentication = () => {
                 const isLocalAuthenticationEnabled = await ExpoLocalAuthentication.isEnrolledAsync();
                 setIsLocalAuthenticationEnabled(isLocalAuthenticationEnabled);
                 if (isLocalAuthenticationEnabled) {
-                    const result = await ExpoLocalAuthentication.authenticateAsync({
-                        promptMessage: 'Please authenticate first',
-                    });
-                    if (result.success) {
+                    try {
+                        await retry(
+                            async ({ attemptsRemaining }) => {
+                                const result = await ExpoLocalAuthentication.authenticateAsync({
+                                    promptMessage: 'Please authenticate first',
+                                });
+                                if (!result.success) {
+                                    await new Promise((resolve) => {
+                                        Alert.alert(`You have ${attemptsRemaining} attempts remaining`, '', [
+                                            { text: 'OK', onPress: () => resolve(null) },
+                                        ]);
+                                    });
+                                    throw new Error('Authentication failed');
+                                }
+                                return result;
+                            },
+                            { maxAttempts: 3 },
+                        );
                         router.navigate(`/${selectedRole}/home`);
+                    } catch {
+                        await handleSignOut();
+                        router.navigate(`/${selectedRole}/sign-in`);
                     }
                 } else if (!signedOut) {
                     await handleSignOut();

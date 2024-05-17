@@ -5,9 +5,10 @@ import amplifyVolunteerConfig from '@/cognito/volunteer';
 import LocalAuthentication from '@/components/LocalAuthentication';
 import shadow from '@/infrastructure/theme/shadow';
 import useRootStore from '@/store';
-import { UserRole } from '@/store/user-role';
+import AmplifyStorage from '@/store/amplifyStorage';
+import { UserRole } from '@/store/types';
 import { Amplify } from 'aws-amplify';
-import * as ExpoLocalAuthentication from 'expo-local-authentication';
+import { cognitoUserPoolsTokenProvider } from 'aws-amplify/auth/cognito';
 import { Pressable } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Image, Text, View } from 'react-native-ui-lib';
@@ -47,6 +48,7 @@ const WalkthroughScreen = () => {
     const onSelectRole = async (role: UserRole) => {
         switchRole(role);
         Amplify.configure(amplifyConfig[role]);
+        cognitoUserPoolsTokenProvider.setKeyValueStorage(new AmplifyStorage(role));
     };
     return (
         <SafeAreaView>

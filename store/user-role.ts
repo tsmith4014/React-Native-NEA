@@ -3,13 +3,7 @@ import useSurvivorStore from '@/store/survivor';
 import useTherapistStore from '@/store/therapist';
 import useVolunteerStore from '@/store/volunteer';
 import { StateCreator } from 'zustand';
-
-export enum UserRole {
-    survivor = 'survivor',
-    volunteer = 'volunteer',
-    lawyer = 'lawyer',
-    therapist = 'therapist',
-}
+import { UserRole } from './types';
 
 export interface UserRoleSlice {
     selectedRole?: UserRole;
