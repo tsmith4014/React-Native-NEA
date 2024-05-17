@@ -1,3 +1,4 @@
+import Loading from '@/components/Loading';
 import { theme } from '@/infrastructure/theme';
 import {
     Montserrat_400Regular,
@@ -39,6 +40,7 @@ const RootLayoutNav = () => {
                             {/*<Stack.Screen name="(tabs)" options={{ headerShown: false }} />*/}
                         </Stack>
                         <Toast position="bottom" bottomOffset={20} />
+                        <Loading />
                     </SafeAreaProvider>
                 </ThemeProvider>
             </GestureHandlerRootView>

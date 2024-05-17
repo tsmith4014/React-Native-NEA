@@ -1,7 +1,7 @@
 {
     "name": "nevereveralone-mobile",
     "main": "expo-router/entry",
-    "version": "1.0.3",
+    "version": "1.0.4",
     "scripts": {
         "start": "expo start",
         "android": "expo run:android",
@@ -24,7 +24,6 @@
         "clsx": "^2.1.1",
         "expo": "~50.0.17",
         "expo-asset": "~9.0.2",
-        "expo-crypto": "~12.8.1",
         "expo-dev-client": "~3.3.11",
         "expo-font": "~11.10.3",
         "expo-image": "~1.10.6",

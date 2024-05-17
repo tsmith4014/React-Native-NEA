@@ -6,9 +6,9 @@ import { BodyMedium, BodyRegular, Title } from '@/infrastructure/theme/fonts';
 import shadow from '@/infrastructure/theme/shadow';
 import useRootStore from '@/store';
 import { CountryItem } from '@/store/survivor/authentication';
-import { signIn, signInWithRedirect, signOut } from 'aws-amplify/auth';
+import { signInWithRedirect } from 'aws-amplify/auth';
 import { router } from 'expo-router';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Eye, EyeOff } from 'react-native-feather';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Toast from 'react-native-toast-message';
@@ -20,7 +20,7 @@ const SignUp = () => {
     const { colors } = useTheme();
     const [showPassword, setShowPassword] = useState(false);
     const [errorMessage, setErrorMessage] = useState({ username: '', email: '', password: '' });
-    const { currentUserStore, selectedRole, redirectIfSignedIn } = useRootStore();
+    const { currentUserStore, selectedRole, redirectIfSignedIn, startLoading, stopLoading } = useRootStore();
     const { country, email, password, username, updateAuthForm, handleSignup, handleSignIn } = currentUserStore!();
     const isDisabled = !(email && username && password);
     const Icon = showPassword ? Eye : EyeOff;
@@ -139,6 +139,7 @@ const SignUp = () => {
                     label="Register"
                     disabled={isDisabled}
                     onPress={async () => {
+                        startLoading();
                         try {
                             const response = await handleSignup();
                             if (response) {
@@ -156,6 +157,8 @@ const SignUp = () => {
                                 type: 'error',
                                 text1: error.message,
                             });
+                        } finally {
+                            stopLoading();
                         }
                     }}
                 />

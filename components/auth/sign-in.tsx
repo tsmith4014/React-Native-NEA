@@ -16,7 +16,7 @@ import { useTheme } from 'styled-components/native';
 const SignIn = () => {
     const { colors } = useTheme();
     const [showPassword, setShowPassword] = useState(false);
-    const { currentUserStore, selectedRole, redirectIfSignedIn } = useRootStore();
+    const { currentUserStore, selectedRole, redirectIfSignedIn, startLoading, stopLoading } = useRootStore();
     const { username, password, updateAuthForm, handleSignIn } = currentUserStore!();
     const Icon = showPassword ? Eye : EyeOff;
     return (
@@ -65,6 +65,7 @@ const SignIn = () => {
                 <Button
                     label="Login"
                     onPress={async () => {
+                        startLoading();
                         try {
                             const { isSignedIn, nextStep } = await handleSignIn();
                             if (isSignedIn) {
@@ -81,6 +82,8 @@ const SignIn = () => {
                                 type: 'error',
                                 text1: error.message,
                             });
+                        } finally {
+                            stopLoading();
                         }
                     }}
                 />
