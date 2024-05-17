@@ -1,12 +1,13 @@
 import useRootStore from '@/store';
 import * as ExpoLocalAuthentication from 'expo-local-authentication';
 import { router } from 'expo-router';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Alert } from 'react-native';
 
 const LocalAuthentication = () => {
     const { selectedRole, currentUserStore, setIsLocalAuthenticationEnabled, getCurrentUser } = useRootStore();
     const { handleSignOut } = currentUserStore!();
+    const [signedOut, setSignedOut] = useState(false);
     useEffect(() => {
         (async () => {
             const user = await getCurrentUser();
@@ -20,7 +21,7 @@ const LocalAuthentication = () => {
                     if (result.success) {
                         router.navigate(`/${selectedRole}/home`);
                     }
-                } else {
+                } else if (!signedOut) {
                     await handleSignOut();
                     Alert.alert(
                         'FaceID is not enabled for the app',
@@ -32,12 +33,13 @@ const LocalAuthentication = () => {
                             },
                         ],
                     );
+                    setSignedOut(true);
                 }
             } else {
                 router.navigate(`/${selectedRole}/features`);
             }
         })();
-    }, [currentUserStore, selectedRole, getCurrentUser, handleSignOut, setIsLocalAuthenticationEnabled]);
+    }, [signedOut, currentUserStore, selectedRole, getCurrentUser, handleSignOut, setIsLocalAuthenticationEnabled]);
 
     return null;
 };
