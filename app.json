@@ -2,7 +2,7 @@
     "expo": {
         "name": "nevereveralonemobile",
         "slug": "nevereveralonemobile",
-        "version": "1.0.2",
+        "version": "1.0.3",
         "orientation": "portrait",
         "icon": "./assets/images/icon.png",
         "scheme": "nevereveralone",
@@ -64,6 +64,7 @@
             "eas": {
                 "projectId": "f85de441-3455-4662-8533-71600b5245d2"
             }
-        }
+        },
+        "owner": "nevereveralone"
     }
 }

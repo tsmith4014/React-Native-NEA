@@ -19,7 +19,7 @@ jobs:
               with:
                   eas-version: latest
                   packager: npm
-                  token: cB3LsjBmwomqAJKiCvfQz5QQbH3TJavOS6MyhhlJ
+                  token: c7PQ1FcKwH3ehvo1eSC_R8_QpsfQApSzwvitbYMG
 
             - name: 📦 Install dependencies
               run: npm install
