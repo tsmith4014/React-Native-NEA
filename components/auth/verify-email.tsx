@@ -80,8 +80,7 @@ const VerifyEmail = () => {
                         startLoading();
                         try {
                             const confirmationCode = codes.join('');
-                            // undefined or null
-                            if (isLocalAuthenticationEnabled == undefined) {
+                            if (faceId && isLocalAuthenticationEnabled == undefined) {
                                 const check = await LocalAuthentication.isEnrolledAsync();
                                 setIsLocalAuthenticationEnabled(check);
                             }
