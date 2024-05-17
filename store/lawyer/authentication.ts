@@ -67,8 +67,8 @@ const authSlice: StateCreator<Authentication> = (set, get) => ({
         return handleSignUpConfirmation({ username, confirmationCode });
     },
     handleSignIn: async () => {
-        const { email, password } = get();
-        return handleSignIn({ username: email, password });
+        const { username, password } = get();
+        return handleSignIn({ username, password });
     },
 });
 
