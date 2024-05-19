@@ -1,7 +1,9 @@
 import { UserRoleSlice } from '@/store/user-role';
-import { AuthUser, getCurrentUser } from 'aws-amplify/auth';
+import { AuthUser as AmplifyAuthUser, getCurrentUser } from 'aws-amplify/auth';
 import { router } from 'expo-router';
 import { StateCreator } from 'zustand';
+
+export type AuthUser = AmplifyAuthUser & { userAttributes: Record<string, string> };
 
 export interface GlobalAmplifySlice {
     getCurrentUser: () => Promise<boolean | AuthUser>;
@@ -14,8 +16,14 @@ const globalAmplifySlice: StateCreator<GlobalAmplifySlice & UserRoleSlice, [], [
 ) => ({
     getCurrentUser: async () => {
         try {
-            return await getCurrentUser();
-        } catch {
+            const user = await getCurrentUser();
+            const userAttributes = get().currentUserStore?.getState()?.userAttributes || {};
+            return {
+                ...user,
+                userAttributes,
+            };
+        } catch (e) {
+            console.error(e);
             return false;
         }
     },

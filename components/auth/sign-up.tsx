@@ -177,7 +177,7 @@ const SignUp = () => {
                             IconSource={Apple}
                             onPress={async () => {
                                 try {
-                                    await signInWithRedirect({ provider: 'Apple' });
+                                    await handleSignIn('Apple');
                                 } catch (e) {
                                     console.error(e);
                                 }
@@ -189,7 +189,7 @@ const SignUp = () => {
                             IconSource={Google}
                             onPress={async () => {
                                 try {
-                                    await signInWithRedirect({ provider: 'Google' });
+                                    await handleSignIn('Google');
                                 } catch (e) {
                                     console.error(e);
                                 }

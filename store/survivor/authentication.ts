@@ -1,4 +1,13 @@
-import { ConfirmSignUpInput, SignInInput, confirmSignUp, signIn, signUp } from 'aws-amplify/auth';
+import {
+    ConfirmSignUpInput,
+    SignInInput,
+    SignInOutput,
+    confirmSignUp,
+    fetchUserAttributes,
+    signIn,
+    signInWithRedirect,
+    signUp,
+} from 'aws-amplify/auth';
 import { StateCreator } from 'zustand';
 
 export type CountryItem = {
@@ -13,11 +22,12 @@ export interface Authentication {
     password: string;
     newPassword: string;
     newPasswordConfirm: string;
+    userAttributes: Record<string, string>;
     resetPasswordConfirmationCode: string;
     updateAuthForm: (value: Partial<Omit<Authentication, 'updateAuthForm'>>) => void;
     handleSignup: () => ReturnType<typeof handleSignUp>;
     handleSignUpConfirmation: (args: { confirmationCode: string }) => ReturnType<typeof handleSignUpConfirmation>;
-    handleSignIn: () => ReturnType<typeof handleSignIn>;
+    handleSignIn: (oauthProvider?: 'Google' | 'Apple') => Promise<SignInOutput | void>;
 }
 
 type SignUpParameters = {
@@ -56,6 +66,7 @@ const authSlice: StateCreator<Authentication> = (set, get) => ({
     password: '',
     newPassword: '',
     newPasswordConfirm: '',
+    userAttributes: {},
     resetPasswordConfirmationCode: '',
     updateAuthForm: (value) => set(value),
     handleSignup: async () => {
@@ -66,9 +77,17 @@ const authSlice: StateCreator<Authentication> = (set, get) => ({
         const { username } = get();
         return handleSignUpConfirmation({ username, confirmationCode });
     },
-    handleSignIn: async () => {
-        const { username, password } = get();
-        return handleSignIn({ username, password });
+    handleSignIn: async (oauthProvider) => {
+        let signInResponse;
+        if (!oauthProvider) {
+            const { username, password } = get();
+            signInResponse = await handleSignIn({ username, password });
+        } else {
+            signInResponse = await signInWithRedirect({ provider: oauthProvider });
+        }
+        const userAttributesResponse = await fetchUserAttributes();
+        set({ userAttributes: userAttributesResponse as Record<string, string> });
+        return signInResponse;
     },
 });
 

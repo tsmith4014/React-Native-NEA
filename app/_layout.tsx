@@ -35,10 +35,7 @@ const RootLayoutNav = () => {
             <GestureHandlerRootView style={{ flex: 1 }}>
                 <ThemeProvider theme={colorScheme === 'dark' ? theme : theme}>
                     <SafeAreaProvider>
-                        <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: 'white' } }}>
-                            {/*<Stack.Screen name="walkthrough/index" options={{ headerShown: false }} />*/}
-                            {/*<Stack.Screen name="(tabs)" options={{ headerShown: false }} />*/}
-                        </Stack>
+                        <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: 'white' } }} />
                         <Toast position="bottom" bottomOffset={20} />
                         <Loading />
                     </SafeAreaProvider>

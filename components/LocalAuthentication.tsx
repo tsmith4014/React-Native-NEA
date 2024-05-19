@@ -52,6 +52,8 @@ const LocalAuthentication = () => {
                         ],
                     );
                     setSignedOut(true);
+                } else {
+                    router.navigate(`/${selectedRole}/home`);
                 }
             } else {
                 router.navigate(`/${selectedRole}/features`);

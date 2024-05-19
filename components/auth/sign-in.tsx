@@ -4,7 +4,7 @@ import TextField from '@/infrastructure/theme/TextField';
 import { BodyMedium, Title } from '@/infrastructure/theme/fonts';
 import shadow from '@/infrastructure/theme/shadow';
 import useRootStore from '@/store';
-import { signInWithRedirect } from 'aws-amplify/auth';
+import { SignInOutput } from 'aws-amplify/auth';
 import { router } from 'expo-router';
 import React, { useState } from 'react';
 import { Eye, EyeOff } from 'react-native-feather';
@@ -67,7 +67,7 @@ const SignIn = () => {
                     onPress={async () => {
                         startLoading();
                         try {
-                            const { isSignedIn, nextStep } = await handleSignIn();
+                            const { isSignedIn, nextStep } = (await handleSignIn()) as SignInOutput;
                             if (isSignedIn) {
                                 return router.navigate(`/${selectedRole}/home`);
                             }
@@ -104,7 +104,7 @@ const SignIn = () => {
                             IconSource={Apple}
                             onPress={async () => {
                                 try {
-                                    await signInWithRedirect({ provider: 'Apple' });
+                                    await handleSignIn('Apple');
                                 } catch (e) {
                                     console.error(e);
                                 }
@@ -116,7 +116,7 @@ const SignIn = () => {
                             IconSource={Google}
                             onPress={async () => {
                                 try {
-                                    await signInWithRedirect({ provider: 'Google' });
+                                    await handleSignIn('Google');
                                 } catch (e) {
                                     console.error(e);
                                 }
