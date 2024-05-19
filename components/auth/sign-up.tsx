@@ -6,9 +6,8 @@ import { BodyMedium, BodyRegular, Title } from '@/infrastructure/theme/fonts';
 import shadow from '@/infrastructure/theme/shadow';
 import useRootStore from '@/store';
 import { CountryItem } from '@/store/survivor/authentication';
-import { signInWithRedirect } from 'aws-amplify/auth';
 import { router } from 'expo-router';
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { Eye, EyeOff } from 'react-native-feather';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Toast from 'react-native-toast-message';
@@ -19,11 +18,41 @@ import countries from './countries';
 const SignUp = () => {
     const { colors } = useTheme();
     const [showPassword, setShowPassword] = useState(false);
-    const [errorMessage, setErrorMessage] = useState({ username: '', email: '', password: '' });
+    const [errorMessage, setErrorMessage] = useState({ email: '', password: '' });
     const { currentUserStore, selectedRole, redirectIfSignedIn, startLoading, stopLoading } = useRootStore();
     const { country, email, password, username, updateAuthForm, handleSignup, handleSignIn } = currentUserStore!();
     const isDisabled = !(email && username && password);
     const Icon = showPassword ? Eye : EyeOff;
+
+    const validatePassword = useCallback(() => {
+        if (password) {
+            const valid = String(password)
+                .toLowerCase()
+                .match(/^(?=.*[0-9])(?=.*[a-z])(?=.*\W)(?!.* ).{8,100}$/);
+            setErrorMessage((state) => ({
+                ...state,
+                password: !valid
+                    ? 'Password requires minimum 8 characters, have one number and one special character.'
+                    : '',
+            }));
+            return valid;
+        }
+        return true;
+    }, [password, setErrorMessage]);
+    const validateEmail = useCallback(() => {
+        if (email) {
+            const valid = String(email)
+                .toLowerCase()
+                .match(/^[^@\s]+@[^@\s]+\.[^@\s]+$/);
+            setErrorMessage((state) => ({
+                ...state,
+                email: !valid ? 'Email address is not valid' : '',
+            }));
+            return valid;
+        }
+        return true;
+    }, [email, setErrorMessage]);
+
     return (
         <SafeAreaView className="h-full flex flex-col" style={{ backgroundColor: colors.brand.primary.springBG }}>
             <KeyboardAwareScrollView className="relative h-full flex flex-col px-4">
@@ -55,17 +84,7 @@ const SignUp = () => {
                               }
                             : undefined
                     }
-                    onBlur={async () => {
-                        if (email) {
-                            const valid = String(email)
-                                .toLowerCase()
-                                .match(/^[^@\s]+@[^@\s]+\.[^@\s]+$/);
-                            setErrorMessage((state) => ({
-                                ...state,
-                                email: !valid ? 'Email address is not valid' : '',
-                            }));
-                        }
-                    }}
+                    onBlur={validateEmail}
                 />
                 <TextField
                     required
@@ -73,14 +92,6 @@ const SignUp = () => {
                     onChangeText={(value) => updateAuthForm({ username: value })}
                     value={username}
                     className="mb-4"
-                    helperText={
-                        errorMessage.username
-                            ? {
-                                  type: HelperTextType.error,
-                                  message: errorMessage.username,
-                              }
-                            : undefined
-                    }
                 />
                 <TextField
                     required
@@ -104,19 +115,7 @@ const SignUp = () => {
                                   message: 'Minimum 8 characters, have one number and one special character.',
                               }
                     }
-                    onBlur={() => {
-                        if (password) {
-                            const valid = String(password)
-                                .toLowerCase()
-                                .match(/^(?=.*[0-9])(?=.*[a-z])(?=.*\W)(?!.* ).{8,100}$/);
-                            setErrorMessage((state) => ({
-                                ...state,
-                                password: !valid
-                                    ? 'Password requires minimum 8 characters, have one number and one special character.'
-                                    : '',
-                            }));
-                        }
-                    }}
+                    onBlur={validatePassword}
                     value={
                         showPassword
                             ? password
@@ -141,6 +140,9 @@ const SignUp = () => {
                     onPress={async () => {
                         startLoading();
                         try {
+                            if (!validateEmail() || !validatePassword()) {
+                                return;
+                            }
                             const response = await handleSignup();
                             if (response) {
                                 if (!response.isSignUpComplete && response.nextStep.signUpStep === 'CONFIRM_SIGN_UP') {
